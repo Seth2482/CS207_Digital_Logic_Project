@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module GlobalState(
+module AE86Car(
     input clk,           
     input power_on,             // 点火 button
     input power_off,            // 熄火 button
