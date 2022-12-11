@@ -17,7 +17,7 @@ reg   back_detector                        = 0 ;
 reg   left_detector                        = 0 ;
 reg   right_detector                       = 0 ;
 reg   front_detector                       = 0 ;
-reg   wire clk_5hz                         = 0 ;
+reg   wire_clk_5hz                         = 0 ;
 
 // SemiAutoDriving Outputs
 wire  turn_left_signal                     ;
@@ -50,7 +50,7 @@ SemiAutoDriving  u_SemiAutoDriving (
     .left_detector           ( left_detector          ),
     .right_detector          ( right_detector         ),
     .front_detector          ( front_detector         ),
-    .wire clk_5hz            ( wire clk_5hz           ),
+    .wire_clk_5hz            ( wire_clk_5hz           ),
 
     .turn_left_signal        ( turn_left_signal       ),
     .turn_right_signal       ( turn_right_signal      ),

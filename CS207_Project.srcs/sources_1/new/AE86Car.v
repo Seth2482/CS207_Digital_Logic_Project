@@ -143,6 +143,7 @@ MannualDriving u_mannualdriving(
 .power_state(power_state),
 .mode(mode),
 .clk(clk),
+.reset(reset),
 .throttle(throttle),
 .brake(brake),
 .clutch(clutch),
@@ -185,6 +186,38 @@ AutoDriving u_auto_driving(
     .place_barrier_signal(auto_place_barrier_signal),
     .destroy_barrier_signal(auto_destroy_barrier_signal)
 );
+
+//里程计
+
+wire[23:0] record;
+record_module u_record_module(
+    .reset(reset),
+    .clk(clk),
+    .power_state(power_state),
+    .mode(mode),
+    .mannual_state(mannual_state),
+    .turn_left_signal(turn_left_signal),
+    .turn_right_signal(turn_right_signal),
+    .move_forward_signal(move_forward_signal),
+    .move_backward_signal(move_backward_signal),
+    .record(record));
+record_display u_record_display(
+    .clk(clk),
+    .reset(reset),
+    .power_state(power_state),
+    .record(record),
+    .seg_en(seg_en),    
+    .seg_out0(seg_out0),  
+    .seg_out1(seg_out1));
+
+
+
+
+
+
+
+
+
 
 SimulatedDevice simulate(
     .sys_clk(clk),
