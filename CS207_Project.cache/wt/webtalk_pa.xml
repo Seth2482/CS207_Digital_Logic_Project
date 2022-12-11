@@ -3,15 +3,9 @@
 <!--The data in this file is primarily intended for consumption by Xilinx tools.
 The structure and the elements are likely to change over the next few releases.
 This means code written to parse this file will need to be revisited each subsequent release.-->
-<<<<<<< HEAD
-<application name="pa" timeStamp="Wed Dec  7 17:52:47 2022">
-<section name="Project Information" visible="false">
-<property name="ProjectID" value="bd408e4817e144dd9b31c333489435fd" type="ProjectID"/>
-=======
 <application name="pa" timeStamp="Tue Dec  6 22:23:43 2022">
 <section name="Project Information" visible="false">
 <property name="ProjectID" value="68ad04c6a18f4d49a7537a32de43081d" type="ProjectID"/>
->>>>>>> e104e302c40e8a91acab0f5fa97fb9c387fca992
 <property name="ProjectIteration" value="1" type="ProjectIteration"/>
 </section>
 <section name="PlanAhead Usage" visible="true">
@@ -24,29 +18,11 @@ This means code written to parse this file will need to be revisited each subseq
 </item>
 <item name="Java Command Handlers">
 <property name="AddSources" value="1" type="JavaHandler"/>
-<<<<<<< HEAD
-<property name="OpenProject" value="2" type="JavaHandler"/>
-=======
 <property name="OpenProject" value="1" type="JavaHandler"/>
->>>>>>> e104e302c40e8a91acab0f5fa97fb9c387fca992
 </item>
 <item name="Gui Handlers">
 <property name="BaseDialog_OK" value="2" type="GuiHandlerData"/>
 <property name="CreateSrcFileDialog_FILE_NAME" value="1" type="GuiHandlerData"/>
-<<<<<<< HEAD
-<property name="DefineModulesDialog_DEFINE_MODULES_AND_SPECIFY_IO_PORTS" value="2" type="GuiHandlerData"/>
-<property name="DefineModulesDialog_ENTITY_NAME" value="1" type="GuiHandlerData"/>
-<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="15" type="GuiHandlerData"/>
-<property name="GettingStartedView_OPEN_PROJECT" value="2" type="GuiHandlerData"/>
-<property name="HJFileChooserRecentListPreview_RECENT_DIRECTORIES" value="1" type="GuiHandlerData"/>
-<property name="PACommandNames_ADD_SOURCES" value="1" type="GuiHandlerData"/>
-<property name="SrcChooserPanel_CREATE_FILE" value="1" type="GuiHandlerData"/>
-</item>
-<item name="Other">
-<property name="GuiMode" value="7" type="GuiMode"/>
-<property name="BatchMode" value="0" type="BatchMode"/>
-<property name="TclMode" value="6" type="TclMode"/>
-=======
 <property name="FileSetPanel_FILE_SET_PANEL_TREE" value="11" type="GuiHandlerData"/>
 <property name="GettingStartedView_OPEN_PROJECT" value="1" type="GuiHandlerData"/>
 <property name="PACommandNames_ADD_SOURCES" value="1" type="GuiHandlerData"/>
@@ -58,7 +34,6 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="GuiMode" value="26" type="GuiMode"/>
 <property name="BatchMode" value="0" type="BatchMode"/>
 <property name="TclMode" value="24" type="TclMode"/>
->>>>>>> e104e302c40e8a91acab0f5fa97fb9c387fca992
 </item>
 </section>
 </application>

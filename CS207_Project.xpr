@@ -3,11 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.   -->
 
-<<<<<<< HEAD
 <Project Version="7" Minor="35" Path="D:/GIT.code/CS207_Digital_Logic_Project/CS207_Project.xpr">
-=======
-<Project Version="7" Minor="35" Path="G:/DigitalLogic/CS207_DigitalLogic_Project/CS207_Project/CS207_Project.xpr">
->>>>>>> e104e302c40e8a91acab0f5fa97fb9c387fca992
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="fcbb60935e9048d2bd996d745d5857f4"/>
