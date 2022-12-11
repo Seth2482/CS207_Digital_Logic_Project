@@ -42,6 +42,8 @@ module AE86Car(
 
 // Global States
 wire power_state;//电源状态
+reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
+wire [1:0] mannual_state;//手动驾驶中的not_starting,starting,moving状态
 
 //各个模式的输出，绑定在simulate的输入
 wire turn_left_signal;
@@ -61,13 +63,13 @@ parameter On =1'b1,Off=1'b0 ;
 reg power_off_signal;
 wire power_off_mannual;
 always @(posedge clk) begin
-    power_off_signal<=power_off|power_off_mannual;
+    power_off_signal <= power_off || power_off_mannual;
     
 end
 power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 
-reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
+
 always @(mode_selection,power_on) begin
     if(power_on) begin
         mode<=2'b00;
@@ -79,9 +81,15 @@ end
 
 
 
-wire [1:0] mannual_state;//手动驾驶中的not_starting,starting,moving状态
-MannualDriving u_mannualdriving(.power_state(power_state),.mode(mode),.clk(clk),
-.throttle(throttle),.brake(brake),.clutch(clutch),.shift(reverse_gear),.turn_left(turn_left),
+MannualDriving u_mannualdriving(
+.power_state(power_state),
+.mode(mode),
+.clk(clk),
+.throttle(throttle),
+.brake(brake),
+.clutch(clutch),
+.shift(reverse_gear),
+.turn_left(turn_left),
 .turn_right(turn_right),
 .turn_left_signal(turn_left_signal),
 .turn_right_signal(turn_left_signal),
