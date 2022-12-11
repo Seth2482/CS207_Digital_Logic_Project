@@ -41,7 +41,7 @@ module AE86Car(
     output turn_right_light,    // 右转灯 led
     output [7:0] seg_en,        // 8 个流水灯开关
     output [7:0] seg_out0,      // 前 4 个流水灯输出
-    output [7:0] seg_out1 ,      // 后 4 个流水灯输出
+    output [7:0] seg_out1       // 后 4 个流水灯输出
 
     );
 wire reset;
@@ -122,6 +122,38 @@ MannualDriving u_mannualdriving(
 .power_off_mannual(power_off_mannual),
 .mannual_state(mannual_state)
 );
+
+//里程计
+
+wire[23:0] record;
+record_module u_record_module(
+    .reset(reset),
+    .clk(clk),
+    .power_state(power_state),
+    .mode(mode),
+    .mannual_state(mannual_state),
+    .turn_left_signal(turn_left_signal),
+    .turn_right_signal(turn_right_signal),
+    .move_forward_signal(move_forward_signal),
+    .move_backward_signal(move_backward_signal),
+    .record(record));
+record_display u_record_display(
+    .clk(clk),
+    .reset(reset),
+    .power_state(power_state),
+    .record(record),
+    .seg_en(seg_en),    
+    .seg_out0(seg_out0),  
+    .seg_out1(seg_out1));
+
+
+
+
+
+
+
+
+
 
 SimulatedDevice simulate(
     .sys_clk(clk),

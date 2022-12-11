@@ -23,7 +23,6 @@
 module record_display(input clk,
                       input reset,
                       input power_state,
-                      input start_counting,
                       input [23:0] record,
                       output reg [7:0] seg_en,    // enables of 8 lights
                       output [7:0] seg_out0,  // output of first 4 lights
