@@ -26,7 +26,7 @@ module AE86Car(
     input power_off,            // 熄火 button
     input throttle,             // 油门 switch 
     input clutch,               // 离合 switch
-    input break,                // 刹车 switch
+    input brake,                // 刹车 switch
     input reverse_gear,         // 倒车 switch
     input turn_left,            // 左转 switch
     input turn_right,           // 右转 switch
@@ -44,12 +44,12 @@ module AE86Car(
 wire power_state;//电源状态
 
 //各个模式的输出，绑定在simulate的输入
-reg turn_left_signal;
-reg turn_right_signal;
-reg move_forward_signal;
-reg move_backward_signal;
-reg place_barrier_signal;
-reg destroy_barrier_signal;
+wire turn_left_signal;
+wire turn_right_signal;
+wire move_forward_signal;
+wire move_backward_signal;
+wire place_barrier_signal;
+wire destroy_barrier_signal;
 wire front_detector;
 wire back_detector;
 wire left_detector;
@@ -58,11 +58,17 @@ wire right_detector;
 parameter On =1'b1,Off=1'b0 ;
 
 // 将power_state由power_module接管
-power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off), .reset(reset), .power_state(power_state));
+reg power_off_signal;
+wire power_off_mannual;
+always @(posedge clk) begin
+    power_off_signal<=power_off|power_off_mannual;
+    
+end
+power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 
 reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
-always @(mode_selection) begin
+always @(mode_selection,power_on) begin
     if(power_on) begin
         mode<=2'b00;
     end
@@ -73,24 +79,33 @@ end
 
 
 
-
-MannualDriving();
+wire [1:0] mannual_state;//手动驾驶中的not_starting,starting,moving状态
+MannualDriving u_mannualdriving(.power_state(power_state),.mode(mode),.clk(clk),
+.throttle(throttle),.brake(brake),.clutch(clutch),.shift(reverse_gear),.turn_left(turn_left),
+.turn_right(turn_right),
+.turn_left_signal(turn_left_signal),
+.turn_right_signal(turn_left_signal),
+.move_forward_signal(move_forward_signal),
+.move_backward_signal(move_backward_signal),
+.power_off_mannual(power_off_mannual),
+.mannual_state(mannual_state)
+);
 
 SimulatedDevice simulate(
-    clk,
-    rx,
-    tx,
+    .sys_clk(clk),
+    .rx(rx),
+    .tx(tx),
 
-    turn_left_signal,
-    turn_right_signal,
-    move_forward_signal,
-    move_backward_signal,
-    place_barrier_signal,
-    destroy_barrier_signal,
-    front_detector,
-    back_detector,
-    left_detector,
-    right_detector
+    .turn_left_signal(turn_left_signal),
+    .turn_right_signal(turn_right_signal),
+    .move_forward_signal(move_forward_signal),
+    .move_backward_signal(move_backward_signal),
+    .place_barrier_signal(place_barrier_signal),
+    .destroy_barrier_signal(destroy_barrier_signal),
+    .front_detector(front_detector),
+    .back_detector(back_detector),
+    .left_detector(left_detector),
+    .right_detector(right_detector)
     
     // input sys_clk, //bind to P17 pin (100MHz system clock)
     // input rx, //bind to N5 pin
