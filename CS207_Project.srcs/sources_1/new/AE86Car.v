@@ -22,24 +22,24 @@
 
 module AE86Car(
     input clk,           
-    input power_on,             // 点火 button
-    input power_off,            // 熄火 button
-    input throttle,             // 油门 switch 
-    input clutch,               // 离合 switch
-    input brake,                // 刹车 switch
-    input reverse_gear,         // 倒车 switch
-    input turn_left,            // 左转 switch
-    input turn_right,           // 右转 switch
-    input turn_left_Semi,       // 左转 button
-    input turn_right_Semi,      // 右转 button
-    input go_straight_Semi,     // 直走 button
-    input rst_n,                // reset button
+    input power_on,             // 点火 button R15
+    input power_off,            // 熄火 button R17
+    input throttle,             // 油门 switch P3
+    input clutch,               // 离合 switch P5
+    input brake,                // 刹车 switch P4
+    input reverse_gear,         // 倒车 switch P2
+    input turn_left,            // 左转 switch R2
+    input turn_right,           // 右转 switch M4
+    input turn_left_Semi,       // 左转 button V1
+    input turn_right_Semi,      // 右转 button R11
+    input go_straight_Semi,     // 直走 button U4
+    input rst_n,                // reset button P15
     input rx,                   // 输入 绑定到 N5
     output tx,                  // 输出 绑定到 T4
-    input [1:0] mode_selection, // 模式选择 switch*2
-    output turn_left_light,     // 左转灯 led
-    output turn_right_light,    // 右转灯 led
-    output [7:0] seg_en,        // 8 个流水灯开关
+    input [1:0] mode_selection, // 模式选择 switch*2 N4 R1
+    output turn_left_light,     // 左转灯 led F6
+    output turn_right_light,    // 右转灯 led G4
+    output [7:0] seg_en,        // 8 个流水灯开关 
     output [7:0] seg_out0,      // 前 4 个流水灯输出
     output [7:0] seg_out1      // 后 4 个流水灯输出
     );
@@ -127,6 +127,17 @@ end
 assign power_off_signal = power_off + power_off_mannual; 
 power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
+
+turn_light_module u_turn_light_module(
+    .reset(reset),
+    .clk(clk),
+    .power_state(power_state),
+    .turn_left_signal(turn_left_signal),
+    .turn_right_signal(turn_right_signal),
+    .is_not_starting(1),
+    .left_led(turn_left_light),
+    .right_led(turn_right_light)
+);
 
 MannualDriving u_mannualdriving(
 .power_state(power_state),
