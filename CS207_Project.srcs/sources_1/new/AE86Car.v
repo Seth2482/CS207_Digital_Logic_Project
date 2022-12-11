@@ -30,6 +30,7 @@ module AE86Car(
     input reverse_gear,         // 倒车 switch
     input turn_left,            // 左转 switch
     input turn_right,           // 右转 switch
+    input reset,
     input rx,                   // 输入 绑定到 N5
     output tx,                  // 输出 绑定到 T4
     input [1:0] mode_selection, // 模式选择 switch*2
@@ -85,6 +86,7 @@ MannualDriving u_mannualdriving(
 .power_state(power_state),
 .mode(mode),
 .clk(clk),
+.reset(reset),
 .throttle(throttle),
 .brake(brake),
 .clutch(clutch),

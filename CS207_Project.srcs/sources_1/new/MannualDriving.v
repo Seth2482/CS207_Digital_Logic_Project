@@ -24,6 +24,7 @@ module MannualDriving(
     input power_state,
     input [1:0] mode,
     input clk,
+    input reset,
 
     input throttle,brake,clutch,shift,turn_left,turn_right,
 
@@ -40,8 +41,25 @@ module MannualDriving(
     parameter not_starting=2'b00,starting=2'b01,moving=2'b10;
 
 
-    always @(posedge clk) begin
+    always @(posedge clk,posedge reset) begin
+        if (reset) begin
+            turn_left_signal<=0;
+            turn_right_signal<=0;
+            move_forward_signal<=0;
+            move_backward_signal<=0;
+    
+            power_off_mannual<=0;//手动挡中更改power状态
+            mannual_state<=not_starting;
+
+
+            
+        end
+        else begin
         if (~power_state||mode!=01) begin
+            turn_left_signal<=0;
+            turn_right_signal<=0;
+            move_forward_signal<=0;
+            move_backward_signal<=0;
             mannual_state<=not_starting;
             power_off_mannual<=0;
         end
@@ -72,6 +90,7 @@ module MannualDriving(
                 
             end
         endcase
+        end
 
 
         
