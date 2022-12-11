@@ -93,6 +93,12 @@ wire power_off_mannual;
 always @(posedge clk) begin
     if(reset) begin
         mode <= 2'b00;
+        turn_left_signal <= 0;
+        turn_right_signal <= 0;
+        move_forward_signal <= 0;
+        move_backward_signal <= 0;
+        place_barrier_signal <= 0;
+        destroy_barrier_signal <= 0;
     end
     else begin
         case(mode) 
@@ -150,10 +156,10 @@ MannualDriving u_mannualdriving(
 .shift(reverse_gear),
 .turn_left(turn_left),
 .turn_right(turn_right),
-.turn_left_signal(semiauto_turn_left_signal),
-.turn_right_signal(semiauto_turn_left_signal),
-.move_forward_signal(semiauto_move_forward_signal),
-.move_backward_signal(semiauto_move_backward_signal),
+.turn_left_signal(manual_turn_left_signal),
+.turn_right_signal(manual_turn_right_signal),
+.move_forward_signal(manual_move_forward_signal),
+.move_backward_signal(manual_move_backward_signal),
 .power_off_mannual(power_off_mannual),
 .mannual_state(mannual_state)
 );
