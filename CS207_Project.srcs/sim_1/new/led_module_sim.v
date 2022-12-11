@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 2022/12/06 22:00:30
+// Create Date: 2022/12/10 23:23:25
 // Design Name: 
-// Module Name: GlobalState
+// Module Name: led_module_sim
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,10 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module GlobalState(
-    
-
-
+module led_module_sim(
 
     );
 endmodule

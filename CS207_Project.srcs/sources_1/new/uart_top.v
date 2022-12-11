@@ -1,24 +1,24 @@
 `timescale 1ns / 1ps
 
 /*
-Êı¾İÊäÈëÊä³ö¹æÔò£º
+æ•°æ®è¾“å…¥è¾“å‡ºè§„åˆ™ï¼š
 
-EGO1·¢ËÍ¸øÈí¼şµÄ8bitÊı¾İ£¬Ç°4bitÒ»´Î¶ÔÓ¦ËÄÖÖ²Ù×÷£ºÇ°½ø¡¢ºóÍË¡¢×ó×ª¡¢ÓÒ×ª¡£×î¸ßbitÎªÑéÖ¤Î»£¬±ØĞë±£³Ö1£¬·ñÔòÈí¼ş»áÖ÷¶¯¶ÏÁ¬¡£
+EGO1å‘é€ç»™è½¯ä»¶çš„8bitæ•°æ®ï¼Œå‰4bitä¸€æ¬¡å¯¹åº”å››ç§æ“ä½œï¼šå‰è¿›ã€åé€€ã€å·¦è½¬ã€å³è½¬ã€‚æœ€é«˜bitä¸ºéªŒè¯ä½ï¼Œå¿…é¡»ä¿æŒ1ï¼Œå¦åˆ™è½¯ä»¶ä¼šä¸»åŠ¨æ–­è¿ã€‚
 
-EGO1½ÓÊÕµ½µÄ8bitÊı¾İ£¬Ç°4bit¶ÔÓ¦Ç°×óÓÒºóËÄ¸ö´«¸ĞÆ÷µÄĞÅºÅ£¬ÊµÊ±¸üĞÂ£¬ºó4bitÔİÊ±Ã»ÓÃ¡££¨ÆäÖĞºó·½ĞÅºÅÒòÎªÃ»É¶ÓÃ£¬ËùÒÔÔİÊ±Ã»¿ª£©
+EGO1æ¥æ”¶åˆ°çš„8bitæ•°æ®ï¼Œå‰4bitå¯¹åº”å‰å·¦å³åå››ä¸ªä¼ æ„Ÿå™¨çš„ä¿¡å·ï¼Œå®æ—¶æ›´æ–°ï¼Œå4bitæš‚æ—¶æ²¡ç”¨ã€‚ï¼ˆå…¶ä¸­åæ–¹ä¿¡å·å› ä¸ºæ²¡å•¥ç”¨ï¼Œæ‰€ä»¥æš‚æ—¶æ²¡å¼€ï¼‰
 
 */
 module uart_top(
-    input clk,//Ê±ÖÓÊäÈë
+    input clk,//æ—¶é’Ÿè¾“å…¥
     input rst,
-    input[7:0] data_in, //Êı¾İÊäÈë
-    output[7:0] data_rec,//¶ÎÂë
-    input rxd,  //Êı¾İ½ÓÊÕ 
-    output txd //Êı¾İ·¢ËÍ
+    input[7:0] data_in, //æ•°æ®è¾“å…¥
+    output[7:0] data_rec,//æ®µç 
+    input rxd,  //æ•°æ®æ¥æ”¶ 
+    output txd //æ•°æ®å‘é€
 ); 
 
 wire clk_ms,clk_20ms,clk_16x,clk_x;
-wire data_ready;//Êı¾İÊÇ·ñ×¼±¸ºÃ
+wire data_ready;//æ•°æ®æ˜¯å¦å‡†å¤‡å¥½
 wire data_error;
 wire send_ready;
 
@@ -26,12 +26,12 @@ reg send = 0;
 always @(posedge clk_ms) 
     send = ~send;
     
-//µ÷ÓÃ·ÖÆµÄ£¿é
-//clk ÊäÈëÊ±ÖÓ50Mhz
-//clk_ms Êä³öÊ±ÖÓ1Khz
-//clk_20ms Êä³öÊ±ÖÓ50Hz
-//clk_x Êä³öÊ±ÖÓ9600Hz
-//clk_16x Êä³öÊ±ÖÓ9600hz*16
+//è°ƒç”¨åˆ†é¢‘æ¨¡å—
+//clk è¾“å…¥æ—¶é’Ÿ50Mhz
+//clk_ms è¾“å‡ºæ—¶é’Ÿ1Khz
+//clk_20ms è¾“å‡ºæ—¶é’Ÿ50Hz
+//clk_x è¾“å‡ºæ—¶é’Ÿ9600Hz
+//clk_16x è¾“å‡ºæ—¶é’Ÿ9600hz*16
 divclk my_divclk(
     .clk(clk),
     .clk_ms(clk_ms),
@@ -40,7 +40,7 @@ divclk my_divclk(
     .clk_x(clk_x)
 );
 
-uart_tx tx(//µ÷ÓÃ´®¿Ú·¢ËÍÄ£¿é
+uart_tx tx(//è°ƒç”¨ä¸²å£å‘é€æ¨¡å—
     .clk_x(clk_x),
     .rst(rst),
     .data_in({1'b1,data_in[6:0]}),
@@ -59,13 +59,13 @@ uart_rx rx(
 endmodule
 
 //
-//·ÖÆµÄ£¿é
+//åˆ†é¢‘æ¨¡å—
 /*
-clk:ÊäÈëÊ±ÖÓ100MHZ
-clk_ms:Êä³öÊ±ÖÓ 1KHz
-clk_20ms:Êä³öÊ±ÖÓ50HZ
-clk_x Êä³öÊ±ÖÓ9600HZ
-clk_16x Êä³öÊ±ÖÓ9600hz*16
+clk:è¾“å…¥æ—¶é’Ÿ100MHZ
+clk_ms:è¾“å‡ºæ—¶é’Ÿ 1KHz
+clk_20ms:è¾“å‡ºæ—¶é’Ÿ50HZ
+clk_x è¾“å‡ºæ—¶é’Ÿ9600HZ
+clk_16x è¾“å‡ºæ—¶é’Ÿ9600hz*16
 */
 
 module divclk(clk,clk_ms,btnclk,clk_16x,clk_x);
@@ -79,7 +79,7 @@ reg clk_ms=0;
 reg btnclk=0;
 reg clk_16x=0;
 reg clk_x=0;
-always@(posedge clk)//ÏµÍ³Ê±ÖÓ·ÖÆµ 100M/1000 = 100000   1000HZ
+always@(posedge clk)//ç³»ç»Ÿæ—¶é’Ÿåˆ†é¢‘ 100M/1000 = 100000   1000HZ
 begin
     if(cnt1==26'd50000)
     begin
