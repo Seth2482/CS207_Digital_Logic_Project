@@ -30,6 +30,7 @@ module AE86Car(
     input reverse_gear,         // 倒车 switch
     input turn_left,            // 左转 switch
     input turn_right,           // 右转 switch
+    input rst_n,                // reset button
     input rx,                   // 输入 绑定到 N5
     output tx,                  // 输出 绑定到 T4
     input [1:0] mode_selection, // 模式选择 switch*2
@@ -39,6 +40,8 @@ module AE86Car(
     output [7:0] seg_out0,      // 前 4 个流水灯输出
     output [7:0] seg_out1       // 后 4 个流水灯输出
     );
+wire reset;
+assign  reset = ~rst_n;
 
 // Global States
 wire power_state;//电源状态
@@ -46,12 +49,25 @@ reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
 wire [1:0] mannual_state;//手动驾驶中的not_starting,starting,moving状态
 
 //各个模式的输出，绑定在simulate的输入
-wire turn_left_signal;
-wire turn_right_signal;
-wire move_forward_signal;
-wire move_backward_signal;
-wire place_barrier_signal;
-wire destroy_barrier_signal;
+wire manual_turn_left_signal;
+wire manual_turn_right_signal;
+wire manual_move_forward_signal;
+wire manual_move_backward_signal;
+wire manual_place_barrier_signal;
+wire manual_destroy_barrier_signal;
+wire semiauto_turn_left_signal;
+wire semiauto_turn_right_signal;
+wire semiauto_move_forward_signal;
+wire semiauto_move_backward_signal;
+wire semiauto_place_barrier_signal;
+wire semiauto_destroy_barrier_signal;
+wire auto_turn_left_signal;
+wire auto_turn_right_signal;
+wire auto_move_forward_signal;
+wire auto_move_backward_signal;
+wire auto_place_barrier_signal;
+wire auto_destroy_barrier_signal;
+
 wire front_detector;
 wire back_detector;
 wire left_detector;
@@ -60,12 +76,15 @@ wire right_detector;
 parameter On =1'b1,Off=1'b0 ;
 
 // 将power_state由power_module接管
-reg power_off_signal;
+wire power_off_signal;
 wire power_off_mannual;
 always @(posedge clk) begin
-    power_off_signal <= power_off || power_off_mannual;
+    if(reset) begin
+        mode <= 2'b00;
+    end
     
 end
+assign power_off_signal = power_off + power_off_mannual; 
 power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 
