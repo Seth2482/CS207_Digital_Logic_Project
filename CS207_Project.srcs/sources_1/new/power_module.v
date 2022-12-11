@@ -34,7 +34,7 @@ module power_module(input clk,
     
     clk_divider cd1(clk, ~(activation_state == 2'b01), clk_1hz);
 
-    always@(posedge clk, posedge reset, power_on ,power_off) begin 
+    always@(posedge clk, posedge reset) begin 
         if (reset || power_off) begin
             activation_state <= 2'b00;
             power_state <= 0;
