@@ -41,7 +41,7 @@ module AE86Car(
     );
 
 // Global States
-reg power_state;//电源状态
+wire power_state;//电源状态
 
 //各个模式的输出，绑定在simulate的输入
 reg turn_left_signal;
@@ -57,14 +57,8 @@ wire right_detector;
 
 parameter On =1'b1,Off=1'b0 ;
 
-always @(posedge power_off) begin
-    power_state<=Off;
-end
-always @(posedge clk) begin
-    if (power_on) begin
-        power_state<=On;
-    end
-end
+// 将power_state由power_module接管
+power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off), .reset(reset), .power_state(power_state));
 
 
 reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
