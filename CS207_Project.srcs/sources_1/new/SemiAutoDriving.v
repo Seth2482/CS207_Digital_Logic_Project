@@ -21,10 +21,10 @@
 
 
 module SemiAutoDriving(
-    input turn_left__Semi,            // 左转 switch
+    input turn_left_Semi,            // 左转 switch
     input turn_right_Semi,           // 右转 switch
     input go_straight_Semi,
-    input wire clk,
+    input clk,
     output reg turn_left_signal,
     output reg turn_right_signal,
     output reg move_forward_signal,
@@ -33,9 +33,9 @@ module SemiAutoDriving(
     input back_detector,
     input left_detector,
     input right_detector,
-    input front_detector,
-    wire clk_5hz
+    input front_detectors
     );
+    wire clk_5hz;
     reg [2:0] state;// 000 auto drive
                     // 010 waiting for command
                     // 100 turn left 
@@ -65,7 +65,7 @@ module SemiAutoDriving(
             begin
                 state<=3'b111;// also go straight.
             end
-            if(turn_left__Semi)
+            if(turn_left_Semi)
             begin
                 state<=3'b100;
             end
