@@ -33,7 +33,7 @@ module SemiAutoDriving(
     input back_detector,
     input left_detector,
     input right_detector,
-    input front_detectors
+    input front_detector
     );
     wire clk_5hz;
     reg [2:0] state;// 000 auto drive

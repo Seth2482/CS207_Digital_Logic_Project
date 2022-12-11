@@ -30,6 +30,5 @@ module AutoDriving(input reset,
                    output move_forward_signal,
                    output move_backward_signal,
                    output place_barrier_signal,
-                   output destroy_barrier_signal
-                   );
+                   output destroy_barrier_signal);
 endmodule
