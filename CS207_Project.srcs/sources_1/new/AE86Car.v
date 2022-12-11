@@ -74,7 +74,8 @@ power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off
 
 
 
-always @(mode_selection,power_on) begin
+always @(mode_selection,power_on) 
+begin
     if(power_on) begin
         mode<=2'b00;
     end
