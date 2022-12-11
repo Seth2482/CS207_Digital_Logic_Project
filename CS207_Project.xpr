@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="35" Path="D:/Vivado Project/CS207_Digital_Logic_Project/CS207_Project.xpr">
+<Project Version="7" Minor="35" Path="D:/GIT.code/CS207_Digital_Logic_Project/CS207_Project.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="fcbb60935e9048d2bd996d745d5857f4"/>
@@ -84,6 +84,14 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/new/GlobalState.v">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/Semi-Auto.v">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
