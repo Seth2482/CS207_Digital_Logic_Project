@@ -41,7 +41,9 @@ module AE86Car(
     output turn_right_light,    // 右转灯 led G4
     output [7:0] seg_en,        // 8 个流水灯开关 
     output [7:0] seg_out0,      // 前 4 个流水灯输出
-    output [7:0] seg_out1      // 后 4 个流水灯输出
+    output [7:0] seg_out1       // 后 4 个流水灯输出
+
+   
     );
 wire reset;
 assign  reset = ~rst_n;
@@ -131,6 +133,9 @@ always @(posedge clk) begin
 end
 
 assign power_off_signal = power_off + power_off_mannual; 
+
+
+
 power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 

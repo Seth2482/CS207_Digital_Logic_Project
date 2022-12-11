@@ -42,7 +42,7 @@ module MannualDriving(
 
 
     always @(posedge clk,posedge reset) begin
-        if (reset) begin
+        if (reset || ~power_state) begin
             turn_left_signal<=0;
             turn_right_signal<=0;
             move_forward_signal<=0;
@@ -54,23 +54,16 @@ module MannualDriving(
 
             
         end
-        else begin
-        if (~power_state||mode!=01) begin
-            turn_left_signal<=0;
-            turn_right_signal<=0;
-            move_forward_signal<=0;
-            move_backward_signal<=0;
-            mannual_state<=not_starting;
-            power_off_mannual<=0;
-        end
-        else case (mannual_state)
+        else
+        begin
+            case (mannual_state)
             not_starting:
             if ({throttle,brake,clutch}==3'b101) begin
 
                 mannual_state<=starting;
             end
             else if({throttle,clutch}==2'b10) begin
-                power_off_mannual<=1;
+                power_off_mannual<=1'b1;
             
             end
             starting:
@@ -86,16 +79,15 @@ module MannualDriving(
                 mannual_state<=starting;
             end
             else if ({shift,clutch}==2'b10) begin
-                power_off_mannual<=1;
+                power_off_mannual<=1'b1;
                 
+            end
+            else if(brake) begin
+                power_off_mannual<=1'b1;
             end
         endcase
         end
-
-
         
-        
-
         
     end
 
