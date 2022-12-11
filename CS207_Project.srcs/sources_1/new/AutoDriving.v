@@ -33,6 +33,4 @@ module AutoDriving(input reset,
                    output destroy_barrier_signal,
                    output led_left,
                    output led_right);
-    
-    
 endmodule
