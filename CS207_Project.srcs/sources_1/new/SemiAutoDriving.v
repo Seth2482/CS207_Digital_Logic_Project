@@ -24,7 +24,7 @@ module SemiAutoDriving(
     input turn_left_Semi,            // 左转 switch
     input turn_right_Semi,           // 右转 switch
     input go_straight_Semi,
-    input wire clk,
+    input clk,
     output reg turn_left_signal,
     output reg turn_right_signal,
     output reg move_forward_signal,

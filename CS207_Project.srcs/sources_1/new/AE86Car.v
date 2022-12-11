@@ -30,7 +30,10 @@ module AE86Car(
     input reverse_gear,         // 倒车 switch
     input turn_left,            // 左转 switch
     input turn_right,           // 右转 switch
-    input go_straight,
+    input turn_left_Semi,       // 左转 button
+    input turn_right_Semi,      // 右转 button
+    input go_straight_Semi,     // 直走 button
+    input rst_n,                // reset button
     input rx,                   // 输入 绑定到 N5
     output tx,                  // 输出 绑定到 T4
     input [1:0] mode_selection, // 模式选择 switch*2
@@ -38,11 +41,10 @@ module AE86Car(
     output turn_right_light,    // 右转灯 led
     output [7:0] seg_en,        // 8 个流水灯开关
     output [7:0] seg_out0,      // 前 4 个流水灯输出
-    output [7:0] seg_out1 ,      // 后 4 个流水灯输出
-    input turn_left_Semi,            // 左转 switch
-    input turn_right_Semi,           // 右转 switch
-    input go_straight_Semi
+    output [7:0] seg_out1      // 后 4 个流水灯输出
     );
+wire reset;
+assign  reset = ~rst_n;
 
 // Global States
 wire power_state;//电源状态
@@ -50,12 +52,33 @@ reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
 wire [1:0] mannual_state;//手动驾驶中的not_starting,starting,moving状态
 
 //各个模式的输出，绑定在simulate的输入
-wire turn_left_signal;
-wire turn_right_signal;
-wire move_forward_signal;
-wire move_backward_signal;
-wire place_barrier_signal;
-wire destroy_barrier_signal;
+wire manual_turn_left_signal;
+wire manual_turn_right_signal;
+wire manual_move_forward_signal;
+wire manual_move_backward_signal;
+wire manual_place_barrier_signal;
+wire manual_destroy_barrier_signal;
+wire semiauto_turn_left_signal;
+wire semiauto_turn_right_signal;
+wire semiauto_move_forward_signal;
+wire semiauto_move_backward_signal;
+wire semiauto_place_barrier_signal;
+wire semiauto_destroy_barrier_signal;
+wire auto_turn_left_signal;
+wire auto_turn_right_signal;
+wire auto_move_forward_signal;
+wire auto_move_backward_signal;
+wire auto_place_barrier_signal;
+wire auto_destroy_barrier_signal;
+
+// 最终传出的输出
+reg turn_left_signal;
+reg turn_right_signal;
+reg move_forward_signal;
+reg move_backward_signal;
+reg place_barrier_signal;
+reg destroy_barrier_signal;
+
 wire front_detector;
 wire back_detector;
 wire left_detector;
@@ -64,26 +87,45 @@ wire right_detector;
 parameter On =1'b1,Off=1'b0 ;
 
 // 将power_state由power_module接管
-reg power_off_signal;
+wire power_off_signal;
 wire power_off_mannual;
+
 always @(posedge clk) begin
-    power_off_signal <= power_off || power_off_mannual;
-    
-end
-power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
-
-
-
-always @(mode_selection,power_on) 
-begin
-    if(power_on) begin
-        mode<=2'b00;
+    if(reset) begin
+        mode <= 2'b00;
     end
     else begin
-        mode<=mode_selection;
+        case(mode) 
+            2'b01: begin
+                turn_left_signal <= manual_turn_left_signal;
+                turn_right_signal <= manual_turn_right_signal;
+                move_backward_signal <= manual_move_backward_signal;
+                move_forward_signal <= manual_move_forward_signal;
+                place_barrier_signal <= 0;
+                destroy_barrier_signal <= 0;
+            end
+            2'b10: begin
+                turn_left_signal <= semiauto_turn_left_signal;
+                turn_right_signal <= semiauto_turn_right_signal;
+                move_backward_signal <= semiauto_move_backward_signal;
+                move_forward_signal <= semiauto_move_forward_signal;
+                place_barrier_signal <= 0;
+                destroy_barrier_signal <= 0;
+            end
+            2'b11: begin 
+                turn_left_signal <= auto_turn_left_signal;
+                turn_right_signal <= auto_turn_right_signal;
+                move_backward_signal <= auto_move_backward_signal;
+                move_forward_signal <= auto_move_forward_signal;
+                place_barrier_signal <= auto_place_barrier_signal;
+                destroy_barrier_signal <= auto_destroy_barrier_signal;
+            end
+        endcase
     end
-end 
+end
 
+assign power_off_signal = power_off + power_off_mannual; 
+power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 
 MannualDriving u_mannualdriving(
@@ -96,12 +138,41 @@ MannualDriving u_mannualdriving(
 .shift(reverse_gear),
 .turn_left(turn_left),
 .turn_right(turn_right),
-.turn_left_signal(turn_left_signal),
-.turn_right_signal(turn_left_signal),
-.move_forward_signal(move_forward_signal),
-.move_backward_signal(move_backward_signal),
+.turn_left_signal(semiauto_turn_left_signal),
+.turn_right_signal(semiauto_turn_left_signal),
+.move_forward_signal(semiauto_move_forward_signal),
+.move_backward_signal(semiauto_move_backward_signal),
 .power_off_mannual(power_off_mannual),
 .mannual_state(mannual_state)
+);
+
+SemiAutoDriving u_semi_auto_driving(
+    .turn_left_Semi(turn_left_Semi),
+    .turn_right_Semi(turn_right_Semi),
+    .clk(clk),
+    .turn_left_signal(semiauto_turn_left_signal),
+    .turn_right_signal(semiauto_turn_right_signal),
+    .move_forward_signal(semiauto_move_forward_signal),
+    .move_backward_signal(semiauto_move_backward_signal),
+    .reset(reset),
+    .back_detector(back_detector),
+    .left_detector(left_detector),
+    .right_detector(right_detector),
+    .front_detector(front_detector)
+);
+
+AutoDriving u_auto_driving(
+    .reset(reset),
+    .front_detector(front_detector),
+    .back_detector(back_detector),
+    .right_detector(right_detector),
+    .left_detector(left_detector),
+    .turn_left_signal(auto_turn_left_signal),
+    .turn_right_signal(auto_turn_right_signal),
+    .move_backward_signal(auto_move_backward_signal),
+    .move_forward_signal(auto_move_forward_signal),
+    .place_barrier_signal(auto_place_barrier_signal),
+    .destroy_barrier_signal(auto_destroy_barrier_signal)
 );
 
 SimulatedDevice simulate(
@@ -119,21 +190,6 @@ SimulatedDevice simulate(
     .back_detector(back_detector),
     .left_detector(left_detector),
     .right_detector(right_detector)
-    
-    // input sys_clk, //bind to P17 pin (100MHz system clock)
-    // input rx, //bind to N5 pin
-    // output tx, //bind to T4 pin
-    
-    // input turn_left_signal,
-    // input turn_right_signal,
-    // input move_forward_signal,
-    // input move_backward_signal,
-    // input place_barrier_signal,
-    // input destroy_barrier_signal,
-    // output front_detector,
-    // output back_detector,
-    // output left_detector,
-    // output right_detector
 );
 
 
