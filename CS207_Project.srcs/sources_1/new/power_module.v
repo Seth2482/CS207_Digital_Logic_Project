@@ -66,11 +66,9 @@ module power_module(input clk,
     end
 
     always @(negedge clk_1hz) begin
-        if(activation_state == 2'b01) begin
-            if(power_on) begin 
-                // 启动
-                activation_state <= 2'b10;
-            end
+        if(activation_state == 2'b01 && power_on) begin
+            // 启动
+            activation_state <= 2'b10;
         end
     end
 
