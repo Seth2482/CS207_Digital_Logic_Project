@@ -21,14 +21,25 @@
 
 
 module AutoDriving(input reset,
+                   input clk,
                    input front_detector,
                    input back_detector,
                    input right_detector,
                    input left_detector,
-                   output turn_left_signal,
-                   output turn_right_signal,
-                   output move_forward_signal,
-                   output move_backward_signal,
-                   output place_barrier_signal,
-                   output destroy_barrier_signal);
+                   output reg turn_left_signal,
+                   output reg turn_right_signal,
+                   output reg move_forward_signal,
+                   output reg move_backward_signal,
+                   output reg place_barrier_signal,
+                   output reg destroy_barrier_signal);
+  always @(posedge clk, posedge reset) begin
+    if(reset) begin 
+        turn_left_signal <= 0;
+        turn_right_signal <= 0;
+        move_forward_signal <= 0;
+        move_backward_signal <= 0;
+        place_barrier_signal <= 0;
+        destroy_barrier_signal <= 0;
+    end
+  end
 endmodule

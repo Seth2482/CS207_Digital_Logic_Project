@@ -68,6 +68,7 @@ xvlog.*
 *.hw
 *.backup.*
 *.debug
+*.xpr
 
 ## checkpoint files
 *.dcp

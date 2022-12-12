@@ -189,6 +189,7 @@ SemiAutoDriving u_semi_auto_driving(
 
 AutoDriving u_auto_driving(
     .reset(reset),
+    .clk(clk),
     .front_detector(front_detector),
     .back_detector(back_detector),
     .right_detector(right_detector),
