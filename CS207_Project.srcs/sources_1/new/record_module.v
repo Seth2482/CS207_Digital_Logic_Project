@@ -24,7 +24,7 @@ module record_module(input reset,
                      input clk,
                      input power_state,
                      input [1:0] mode,
-                     input [1:0] mannual_state,
+                     input [1:0] manual_state,
                      input turn_left_signal,
                      input turn_right_signal,
                      input move_forward_signal,
@@ -33,7 +33,7 @@ module record_module(input reset,
     wire clk_2hz;
     clk_divider_with_enable u_clk_2hz(.clk(clk),
     .reset(reset || ~power_state),
-    .enable(turn_left_signal || turn_right_signal || move_forward_signal || move_backward_signal || (mode == 2'b01 && mannual_state == 2'b10)),
+    .enable(turn_left_signal || turn_right_signal || move_forward_signal || move_backward_signal || (mode == 2'b01 && manual_state == 2'b10)),
     .clk_out(clk_2hz));
     
     always @(posedge clk, posedge reset) begin

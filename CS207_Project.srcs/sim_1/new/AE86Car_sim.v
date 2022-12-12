@@ -89,12 +89,13 @@ AE86Car #(
     .seg_out1                ( seg_out1          [7:0] )
 );
 defparam u_AE86Car.u_power_module.cd1.period = 100;
+defparam u_AE86Car.u_record_module.u_clk_2hz.period = 50;
 initial
 begin
     #(5*PERIOD) power_on = 1;
     #(1500) power_on = 0;
 
-    #(1000) mode_selection = 2'b01;
+    #1000 mode_selection = 2'b01;
     #1000 {throttle,brake,clutch}=3'b101;
     #4000 {throttle,brake,clutch}=3'b100;
 
