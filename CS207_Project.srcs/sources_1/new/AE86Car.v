@@ -51,7 +51,7 @@ assign  reset = ~rst_n;
 // Global States
 wire power_state;//电源状态
 reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
-wire [1:0] mannual_state;//手动驾驶中的not_starting,starting,moving状态
+wire [1:0] manual_state;//手动驾驶中的not_starting,starting,moving状态
 
 //各个模式的输出，绑定在simulate的输入
 wire manual_turn_left_signal;
@@ -90,11 +90,27 @@ parameter On =1'b1,Off=1'b0 ;
 
 // 将power_state由power_module接管
 wire power_off_signal;
-wire power_off_mannual;
+wire power_off_manual;
 
+// mode selection
+always @(posedge clk, posedge reset) begin
+    if(reset) begin 
+        mode <= 2'b00;
+    end
+    else begin 
+        case (mode) 
+            2'b00: begin 
+                if(mode_selection != 2'b00) begin 
+                    mode <= mode_selection;
+                end
+            end
+        endcase
+    end
+end
+
+// output switcher
 always @(posedge clk) begin
     if(reset) begin
-        mode <= 2'b00;
         turn_left_signal <= 0;
         turn_right_signal <= 0;
         move_forward_signal <= 0;
@@ -132,25 +148,12 @@ always @(posedge clk) begin
     end
 end
 
-assign power_off_signal = power_off + power_off_mannual; 
 
-
-
+assign power_off_signal = power_off + power_off_manual; 
 power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 
-turn_light_module u_turn_light_module(
-    .reset(reset),
-    .clk(clk),
-    .power_state(power_state),
-    .turn_left_signal(turn_left_signal),
-    .turn_right_signal(turn_right_signal),
-    .is_not_starting(1),
-    .left_led(turn_left_light),
-    .right_led(turn_right_light)
-);
-
-MannualDriving u_mannualdriving(
+ManualDriving u_manualdriving(
 .power_state(power_state),
 .mode(mode),
 .clk(clk),
@@ -165,8 +168,8 @@ MannualDriving u_mannualdriving(
 .turn_right_signal(manual_turn_right_signal),
 .move_forward_signal(manual_move_forward_signal),
 .move_backward_signal(manual_move_backward_signal),
-.power_off_mannual(power_off_mannual),
-.mannual_state(mannual_state)
+.power_off_manual(power_off_manual),
+.manual_state(manual_state)
 );
 
 SemiAutoDriving u_semi_auto_driving(
@@ -198,6 +201,18 @@ AutoDriving u_auto_driving(
     .destroy_barrier_signal(auto_destroy_barrier_signal)
 );
 
+turn_light_module u_turn_light_module(
+    .reset(reset),
+    .clk(clk),
+    .power_state(power_state),
+    .mode(mode),
+    .manual_state(manual_state),
+    .turn_left_signal(turn_left_signal),
+    .turn_right_signal(turn_right_signal),
+    .left_led(turn_left_light),
+    .right_led(turn_right_light)
+);
+
 //里程计
 
 wire[23:0] record;
@@ -206,12 +221,13 @@ record_module u_record_module(
     .clk(clk),
     .power_state(power_state),
     .mode(mode),
-    .mannual_state(mannual_state),
+    .manual_state(manual_state),
     .turn_left_signal(turn_left_signal),
     .turn_right_signal(turn_right_signal),
     .move_forward_signal(move_forward_signal),
     .move_backward_signal(move_backward_signal),
     .record(record));
+
 record_display u_record_display(
     .clk(clk),
     .reset(reset),
@@ -220,15 +236,6 @@ record_display u_record_display(
     .seg_en(seg_en),    
     .seg_out0(seg_out0),  
     .seg_out1(seg_out1));
-
-
-
-
-
-
-
-
-
 
 SimulatedDevice simulate(
     .sys_clk(clk),

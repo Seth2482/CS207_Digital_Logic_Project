@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module MannualDriving(
+module ManualDriving(
     input power_state,
     input [1:0] mode,
     input clk,
@@ -33,10 +33,10 @@ module MannualDriving(
     output reg move_forward_signal,
     output reg move_backward_signal,
     
-    output reg power_off_mannual,//手动挡中更改power状态
-    output reg[1:0] mannual_state
+    output reg power_off_manual,//手动挡中更改power状态
+    output reg[1:0] manual_state
     );
-    //reg[1:0] mannual_state;移至output
+    //reg[1:0] manual_state;移至output
     
     parameter not_starting=2'b00,starting=2'b01,moving=2'b10;
 
@@ -48,42 +48,42 @@ module MannualDriving(
             move_forward_signal<=0;
             move_backward_signal<=0;
     
-            power_off_mannual<=0;//手动挡中更改power状态
-            mannual_state<=not_starting;
+            power_off_manual<=0;//手动挡中更改power状态
+            manual_state<=not_starting;
 
 
             
         end
         else
         begin
-            case (mannual_state)
+            case (manual_state)
             not_starting:
             if ({throttle,brake,clutch}==3'b101) begin
 
-                mannual_state<=starting;
+                manual_state<=starting;
             end
             else if({throttle,clutch}==2'b10) begin
-                power_off_mannual<=1'b1;
+                power_off_manual<=1'b1;
             
             end
             starting:
             if ({throttle,brake,clutch}==3'b100) begin
-                mannual_state<=moving;
+                manual_state<=moving;
             end
             else if (brake) begin
-                mannual_state<=not_starting;
+                manual_state<=not_starting;
             end
             
             moving:
             if (~throttle||clutch) begin
-                mannual_state<=starting;
+                manual_state<=starting;
             end
             else if ({shift,clutch}==2'b10) begin
-                power_off_mannual<=1'b1;
+                power_off_manual<=1'b1;
                 
             end
             else if(brake) begin
-                power_off_mannual<=1'b1;
+                power_off_manual<=1'b1;
             end
         endcase
         end
@@ -91,8 +91,8 @@ module MannualDriving(
         
     end
 
-    always @(mannual_state,turn_left,turn_right,shift ) begin
-        if(mannual_state==moving)begin
+    always @(manual_state,turn_left,turn_right,shift ) begin
+        if(manual_state==moving)begin
         
             case ({turn_left,turn_right,shift})//左转右转倒车
                 3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0010;//左右前后
