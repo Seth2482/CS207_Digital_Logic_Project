@@ -41,8 +41,8 @@ module ManualDriving(
     parameter not_starting=2'b00,starting=2'b01,moving=2'b10;
 
 
-    always @(posedge clk,posedge reset) begin
-        if (reset || ~power_state) begin
+    always @(posedge clk) begin
+        if (reset) begin
             turn_left_signal<=0;
             turn_right_signal<=0;
             move_forward_signal<=0;
@@ -54,7 +54,16 @@ module ManualDriving(
 
             
         end
-        else
+        else if (~power_state) begin
+             turn_left_signal<=0;
+            turn_right_signal<=0;
+            move_forward_signal<=0;
+            move_backward_signal<=0;
+    
+            power_off_manual<=0;
+            manual_state<=not_starting;
+
+        end
         begin
             case (manual_state)
             not_starting:
@@ -64,6 +73,7 @@ module ManualDriving(
             end
             else if({throttle,clutch}==2'b10) begin
                 power_off_manual<=1'b1;
+                manual_state<=not_starting;
             
             end
             starting:
@@ -80,61 +90,71 @@ module ManualDriving(
             end
             else if ({shift,clutch}==2'b10) begin
                 power_off_manual<=1'b1;
+                manual_state<=not_starting;
                 
             end
             else if(brake) begin
                 power_off_manual<=1'b1;
+                manual_state<= not_starting;
             end
-        endcase
-        if(manual_state==moving)begin
-        
-            case ({turn_left,turn_right,shift})//左转右转倒车
-                3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;//左右前后
-                3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
-                3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0110;
-                3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0101;
-                3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1010;
-                3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1001;
-                3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;
-                3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
-                default:{turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<={turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal};
             endcase
-        end  
-        
-        else begin
-            {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0000;
-        end
-
 
         end
-        
-        
-    end
+        if(manual_state==moving) begin
+                case (shift)
+                    1'b0: {move_forward_signal,move_backward_signal}<=2'b10;
+                    1'b1:{move_forward_signal,move_backward_signal}<=2'b01;
+                    default: {move_forward_signal,move_backward_signal}<={move_forward_signal,move_backward_signal};
+                endcase
+            end
+            else begin
+                {move_forward_signal,move_backward_signal}<=2'b00;
 
-    // always @(posedge clk ) begin
-    //     if(manual_state==moving)begin
+
+
+            end        
+        if(manual_state!=not_starting) begin
+                case ({turn_left,turn_right})
+                    2'b00: {turn_left_signal,turn_right_signal}<=2'b00;
+                    2'b01: {turn_left_signal,turn_right_signal}<=2'b01;
+                    2'b10: {turn_left_signal,turn_right_signal}<=2'b10;
+                    2'b11: {turn_left_signal,turn_right_signal}<=2'b11;
+                    default: {turn_left_signal,turn_right_signal}<={turn_left_signal,turn_right_signal};
+                endcase
+        end else
+
+        begin
+                {turn_left_signal,turn_right_signal}<=2'b00;
+        end    
+
+    end        
+
+        // if(manual_state==moving)begin
+        //     case ({turn_left,turn_right,shift})//左转右转倒车
+        //         3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;//左右前后
+        //         3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
+        //         3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0110;
+        //         3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0101;
+        //         3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1010;
+        //         3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1001;
+        //         3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;
+        //         3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
+        //         default:{turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<={turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal};
+        //     endcase
+        // end  
+        // else begin
+        //     {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0000;
+        // end
         
-    //         case ({turn_left,turn_right,shift})//左转右转倒车
-    //             3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;//左右前后
-    //             3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
-    //             3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0110;
-    //             3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0101;
-    //             3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1010;
-    //             3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1001;
-    //             3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;
-    //             3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
-    //             default:{turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<={turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal};
-    //         endcase
-    //     end  
-        
-    //     else begin
-    //         {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0000;
-    //     end
+
+
+    
+   
 
             
         
         
-    // end
+    
 
 
 endmodule

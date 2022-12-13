@@ -28,10 +28,11 @@ module AE86Car(
     input clutch,               // 离合 switch P5
     input brake,                // 刹车 switch P4
     input reverse_gear,         // 倒车 switch P2
-    input turn_left,            // 左转 switch R2
-    input turn_right,           // 右转 switch M4
-    input turn_left_Semi,       // 左转 button V1
-    input turn_right_Semi,      // 右转 button R11
+    input turn_left,            // 左转 button V1
+    input turn_right,           // 右转 button R11
+    //由于题上说明左右转用按钮，所以手动半自动左右转共用
+    // input turn_left_Semi,       // 左转 button V1
+    // input turn_right_Semi,      // 右转 button R11
     input go_straight_Semi,     // 直走 button U4
     input rst_n,                // reset button P15
     input rx,                   // 输入 绑定到 N5
@@ -94,7 +95,7 @@ wire back_detector;
 wire left_detector;
 wire right_detector;
 
-parameter On =1'b1,Off=1'b0 ;
+// parameter On =1'b1,Off=1'b0 ;//弃用
 
 // 将power_state由power_module接管
 wire power_off_signal;
@@ -106,6 +107,11 @@ always @(posedge clk, posedge reset) begin
         mode <= 2'b00;
     end
     else begin 
+        //认为开着车是可以换模式的
+        // mode<=mode_selection;
+
+
+        //开着车不能换模式
         case (mode) 
             2'b00: begin 
                 if(mode_selection != 2'b00) begin 
@@ -117,7 +123,7 @@ always @(posedge clk, posedge reset) begin
 end
 
 // output switcher
-always @(posedge clk) begin
+always @(posedge clk,posedge reset) begin
     if(reset) begin
         turn_left_signal <= 0;
         turn_right_signal <= 0;
@@ -196,8 +202,8 @@ ManualDriving u_manualdriving(
 );
 
 SemiAutoDriving u_semi_auto_driving(
-    .turn_left_Semi(turn_left_Semi),
-    .turn_right_Semi(turn_right_Semi),
+    .turn_left_Semi(turn_left),
+    .turn_right_Semi(turn_right),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),

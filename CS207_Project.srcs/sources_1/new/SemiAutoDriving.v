@@ -40,8 +40,8 @@ module SemiAutoDriving(
                     // 010 waiting for command
                     // 100 turn left 
                     // 001 turn right
-                    //011 turning right
-                    //110 turning left
+                    // 011 turning right
+                    // 110 turning left
                     // 111 go straight
     clk_divider #(.period(20000000)) cd5(clk, ~(activation_state == 2'b01), clk_5hz);
 
