@@ -41,7 +41,15 @@ module AE86Car(
     output turn_right_light,    // 右转灯 led G4
     output [7:0] seg_en,        // 8 个流水灯开关 
     output [7:0] seg_out0,      // 前 4 个流水灯输出
-    output [7:0] seg_out1       // 后 4 个流水灯输出
+    output [7:0] seg_out1,       // 后 4 个流水灯输出
+
+
+//测试输出
+    output reg power_state,
+    output reg [1:0] mode,
+    output [1:0] manual_state,
+    output manual_move_forward_signal
+    
 
    
     );
@@ -49,14 +57,14 @@ wire reset;
 assign  reset = ~rst_n;
 
 // Global States
-wire power_state;//电源状态
-reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
-wire [1:0] manual_state;//手动驾驶中的not_starting,starting,moving状态
+//wire power_state;//电源状态
+// reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
+// wire [1:0] manual_state;//手动驾驶中的not_starting,starting,moving状态
 
 //各个模式的输出，绑定在simulate的输入
 wire manual_turn_left_signal;
 wire manual_turn_right_signal;
-wire manual_move_forward_signal;
+// wire manual_move_forward_signal;
 wire manual_move_backward_signal;
 wire manual_place_barrier_signal;
 wire manual_destroy_barrier_signal;
@@ -150,7 +158,22 @@ end
 
 
 assign power_off_signal = power_off + power_off_manual; 
-power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
+// power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state),.clk_1hz(clk_1hz));
+
+//暂时取代电源模块
+always @(posedge clk,posedge reset) begin
+
+    if(power_off_signal||reset) begin
+        power_state<= 0;
+    end
+    else if (power_on) begin
+        power_state<=1 ;
+    end else begin
+        power_state<=power_state;
+    end
+
+
+end
 
 
 ManualDriving u_manualdriving(

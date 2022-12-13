@@ -86,34 +86,55 @@ module ManualDriving(
                 power_off_manual<=1'b1;
             end
         endcase
-        end
-        
-        
-    end
-
-    always @(manual_state,turn_left,turn_right,shift ) begin
         if(manual_state==moving)begin
         
             case ({turn_left,turn_right,shift})//左转右转倒车
-                3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0010;//左右前后
-                3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0001;
-                3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0110;
-                3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0101;
-                3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b1010;
-                3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b1001;
-                3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0010;
-                3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0001;
+                3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;//左右前后
+                3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
+                3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0110;
+                3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0101;
+                3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1010;
+                3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1001;
+                3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;
+                3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
+                default:{turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<={turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal};
             endcase
         end  
         
         else begin
-            {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}=4'b0000;
+            {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0000;
         end
+
+
+        end
+        
+        
+    end
+
+    // always @(posedge clk ) begin
+    //     if(manual_state==moving)begin
+        
+    //         case ({turn_left,turn_right,shift})//左转右转倒车
+    //             3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;//左右前后
+    //             3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
+    //             3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0110;
+    //             3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0101;
+    //             3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1010;
+    //             3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1001;
+    //             3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;
+    //             3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
+    //             default:{turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<={turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal};
+    //         endcase
+    //     end  
+        
+    //     else begin
+    //         {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0000;
+    //     end
 
             
         
         
-    end
+    // end
 
 
 endmodule

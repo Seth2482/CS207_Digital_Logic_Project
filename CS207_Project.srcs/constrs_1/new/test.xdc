@@ -62,10 +62,9 @@ set_property PACKAGE_PIN R17 [get_ports power_off]
 set_property PACKAGE_PIN P2 [get_ports reverse_gear]
 set_property PACKAGE_PIN P15 [get_ports rst_n]
 set_property PACKAGE_PIN R2 [get_ports turn_left]
-set_property PACKAGE_PIN F6 [get_ports turn_left_light]
+set_property PACKAGE_PIN K1 [get_ports turn_left_light]
 set_property PACKAGE_PIN V1 [get_ports turn_left_Semi]
 set_property PACKAGE_PIN M4 [get_ports turn_right]
-set_property PACKAGE_PIN G4 [get_ports turn_right_light]
 set_property PACKAGE_PIN R11 [get_ports turn_right_Semi]
 set_property PACKAGE_PIN P17 [get_ports clk]
 set_property PACKAGE_PIN G2 [get_ports {seg_en[0]}]
@@ -92,3 +91,24 @@ set_property PACKAGE_PIN F3 [get_ports {seg_out1[3]}]
 set_property PACKAGE_PIN E2 [get_ports {seg_out1[2]}]
 set_property PACKAGE_PIN D2 [get_ports {seg_out1[1]}]
 set_property PACKAGE_PIN H2 [get_ports {seg_out1[0]}]
+
+
+set_property IOSTANDARD LVCMOS33 [get_ports power_state]
+set_property PACKAGE_PIN K2 [get_ports power_state]
+
+
+
+
+set_property IOSTANDARD LVCMOS33 [get_ports {manual_state[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {manual_state[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {mode[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {mode[0]}]
+set_property PACKAGE_PIN J2 [get_ports {mode[0]}]
+set_property PACKAGE_PIN J3 [get_ports {mode[1]}]
+set_property PACKAGE_PIN H4 [get_ports {manual_state[0]}]
+set_property PACKAGE_PIN J4 [get_ports {manual_state[1]}]
+
+
+set_property IOSTANDARD LVCMOS33 [get_ports manual_move_forward_signal]
+set_property PACKAGE_PIN G3 [get_ports manual_move_forward_signal]
+set_property PACKAGE_PIN H6 [get_ports turn_right_light]
