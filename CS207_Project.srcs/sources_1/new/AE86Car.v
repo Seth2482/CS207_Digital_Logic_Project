@@ -49,7 +49,6 @@ module AE86Car(
     output reg [1:0] mode,
     output [1:0] manual_state,
     output manual_move_forward_signal
-    
 
    
     );
