@@ -45,7 +45,7 @@ module AE86Car(
 
 
 //测试输出
-    output reg power_state,
+    output power_state,
     output reg [1:0] mode,
     output [1:0] manual_state,
     output manual_move_forward_signal
