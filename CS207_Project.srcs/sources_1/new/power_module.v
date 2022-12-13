@@ -26,50 +26,59 @@ module power_module(input clk,
                     input reset,
                     output reg power_state);
     
-    wire clk_1hz;                  // 1hz分频器
+    wire clk_100hz;                // 100hz分频器
     reg [1:0] activation_state;    // 车辆power的状态
-                                // 00 等待启动按钮按下
-                                // 01 按钮已按下，等待1s后启动
-                                // 10 车辆已启动
-    
-    clk_divider cd1(clk, ~(activation_state == 2'b01), clk_1hz);
+                                   // 00 等待启动按钮按下
+                                   // 01 按钮已按下，等待1s后启动
+                                   // 10 车辆已启动
+    reg [6:0] timer;
+    clk_divider #(.period(1_0000_00)) cd1(.clk(clk), .reset(reset), .clk_out(clk_100hz));
+    assign state = activation_state;
 
-    always@(posedge clk, posedge reset) begin //删掉了, power_on ,power_off
-        if (reset || power_off) begin
+    always @(posedge clk_100hz, posedge reset) begin
+        if(reset || power_off) begin
             activation_state <= 2'b00;
-            power_state <= 0;
-            $display("1");
+            timer <= 0;
         end
-        else begin
-            // 车辆未启动
-            $display("2");
-            case (activation_state)
+        else begin 
+            case(activation_state) 
                 2'b00: begin 
-            $display("3");
-
-                    if(power_on) begin
+                    if(power_on) begin 
                         activation_state <= 2'b01;
-                        power_state <= 0;
+                        timer <= 0;
                     end
                 end
-                2'b01: begin
-                    if(~power_on) begin
+                2'b01: begin 
+                    if(power_off || ~power_on) begin
                         activation_state <= 2'b00;
-                        power_state <= 0;
+                        timer <= 0;
+                    end
+                    else if(timer != 7'o100) begin 
+                        timer <= timer + 1;
+                    end
+                    else begin
+                        activation_state <= 2'b10;
+                        timer <= 0;
                     end
                 end
-                2'b10: begin 
-                    power_state <= 1;
+                2'b10: begin
+                    if(power_off) begin 
+                        activation_state <= 2'b00;
+                    end
                 end
             endcase
         end
     end
 
-    always @(negedge clk_1hz) begin
-        if(activation_state == 2'b01 && power_on) begin
-            // 启动
-            activation_state <= 2'b10;
-        end
+  always @(posedge clk) begin
+    if(reset) begin
+        power_state <= 0;
     end
-
+    else begin 
+        if(activation_state == 2'b10)
+            power_state <= 1;
+        else
+            power_state <= 0;
+    end
+  end
 endmodule

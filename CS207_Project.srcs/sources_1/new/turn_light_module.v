@@ -35,11 +35,10 @@ module turn_light_module(input reset,
     // 10 left light flash
     // 11 right light flash
     clk_divider #(.period(5000_0000)) u_clk_2hz(.clk(clk), .reset(reset), .clk_out(clk_2hz));
+    
     always @(posedge clk, posedge reset) begin
         if (reset || ~power_state) begin
             state <= 2'b00;
-            left_led <= 0;
-            right_led <= 0;
         end
         else begin
             case (state)

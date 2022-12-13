@@ -46,11 +46,10 @@ module AE86Car(
 
 
 //测试输出
-    output reg power_state,
+    output power_state,
     output reg [1:0] mode,
     output [1:0] manual_state,
     output manual_move_forward_signal
-    
 
    
     );
@@ -164,23 +163,7 @@ end
 
 
 assign power_off_signal = power_off + power_off_manual; 
-// power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state),.clk_1hz(clk_1hz));
-
-//暂时取代电源模块
-always @(posedge clk,posedge reset) begin
-
-    if(power_off_signal||reset) begin
-        power_state<= 0;
-    end
-    else if (power_on) begin
-        power_state<=1 ;
-    end else begin
-        power_state<=power_state;
-    end
-
-
-end
-
+power_module u_power_module(.clk(clk), .power_on(power_on), .power_off(power_off_signal), .reset(reset), .power_state(power_state));
 
 ManualDriving u_manualdriving(
 .power_state(power_state),

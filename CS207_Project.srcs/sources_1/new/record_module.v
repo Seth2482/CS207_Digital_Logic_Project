@@ -36,13 +36,12 @@ module record_module(input reset,
     .enable(turn_left_signal || turn_right_signal || move_forward_signal || move_backward_signal || (mode == 2'b01 && manual_state == 2'b10)),
     .clk_out(clk_2hz));
     
-    always @(posedge clk, posedge reset) begin
+    always @(negedge clk_2hz) begin
         if (reset || ~power_state) begin
             record <= 0;
         end
-    end
-    
-    always @(negedge clk_2hz) begin
+        else begin
         record = record + 1;
+        end
     end
 endmodule
