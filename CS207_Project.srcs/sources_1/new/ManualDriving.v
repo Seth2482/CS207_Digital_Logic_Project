@@ -39,6 +39,7 @@ module ManualDriving(
     //reg[1:0] manual_state;移至output
     
     parameter not_starting=2'b00,starting=2'b01,moving=2'b10;
+    reg break=0;
 
 
     always @(posedge clk) begin
@@ -50,6 +51,7 @@ module ManualDriving(
     
             power_off_manual<=0;//手动挡中更改power状态
             manual_state<=not_starting;
+            
 
 
             
@@ -62,6 +64,7 @@ module ManualDriving(
     
             power_off_manual<=0;
             manual_state<=not_starting;
+            
 
         end
         begin
@@ -88,13 +91,16 @@ module ManualDriving(
             if (~throttle||clutch) begin
                 manual_state<=starting;
             end
-            else if ({shift,clutch}==2'b10) begin
+            // else if ({shift,clutch}==2'b10) begin
+            //     power_off_manual<=1'b1;
+            //     manual_state<=not_starting;
+            // end
+            else if (break) begin
                 power_off_manual<=1'b1;
                 manual_state<=not_starting;
                 
             end
             else if(brake) begin
-                power_off_manual<=1'b1;
                 manual_state<= not_starting;
             end
             endcase
@@ -127,7 +133,25 @@ module ManualDriving(
                 {turn_left_signal,turn_right_signal}<=2'b00;
         end    
 
-    end        
+    end
+
+    //倒车
+    
+    // always @(shift) begin
+    //     if(manual_state==moving&&shift) begin
+    //         break<=1;
+    //     end else if (reset||~power_state) begin
+    //         break<=0;
+    //     end
+    //      else begin
+    //         break<=break;
+
+    //     end
+
+    // end        
+
+
+
 
         // if(manual_state==moving)begin
         //     case ({turn_left,turn_right,shift})//左转右转倒车
