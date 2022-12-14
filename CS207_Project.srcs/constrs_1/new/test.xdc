@@ -53,9 +53,7 @@ set_property PACKAGE_PIN P4 [get_ports brake]
 
 
 set_property IOSTANDARD LVCMOS33 [get_ports rst_n]
-set_property IOSTANDARD LVCMOS33 [get_ports go_straight_Semi]
 set_property PACKAGE_PIN P3 [get_ports throttle]
-set_property PACKAGE_PIN U4 [get_ports go_straight_Semi]
 set_property PACKAGE_PIN R17 [get_ports power_off]
 set_property PACKAGE_PIN P2 [get_ports reverse_gear]
 set_property PACKAGE_PIN P15 [get_ports rst_n]
@@ -110,3 +108,17 @@ set_property PACKAGE_PIN G3 [get_ports manual_move_forward_signal]
 set_property PACKAGE_PIN H6 [get_ports turn_right_light]
 
 
+
+
+set_property IOSTANDARD LVCMOS33 [get_ports left_detector]
+set_property IOSTANDARD LVCMOS33 [get_ports front_detector]
+set_property PACKAGE_PIN L1 [get_ports front_detector]
+set_property PACKAGE_PIN K6 [get_ports back_detector]
+set_property IOSTANDARD LVCMOS33 [get_ports back_detector]
+set_property IOSTANDARD LVCMOS33 [get_ports right_detector]
+set_property PACKAGE_PIN K3 [get_ports right_detector]
+set_property PACKAGE_PIN M1 [get_ports left_detector]
+
+
+set_property IOSTANDARD LVCMOS33 [get_ports go_straight_semi]
+set_property PACKAGE_PIN U4 [get_ports go_straight_semi]
