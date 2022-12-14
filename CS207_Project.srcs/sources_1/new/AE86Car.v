@@ -28,11 +28,12 @@ module AE86Car(
     input clutch,               // 离合 switch P5
     input brake,                // 刹车 switch P4
     input reverse_gear,         // 倒车 switch P2
-    input turn_left,            // 左转 switch R2
-    input turn_right,           // 右转 switch M4
-    input turn_left_Semi,       // 左转 button V1
-    input turn_right_Semi,      // 右转 button R11
-    input go_straight_Semi,     // 直走 button U4
+    input turn_left,            // 左转 button V1
+    input turn_right,           // 右转 button R11
+    //由于题上说明左右转用按钮，所以手动半自动左右转共用
+    // input turn_left_Semi,       // 左转 button V1
+    // input turn_right_Semi,      // 右转 button R11
+    input go_straight_semi,     // 直走 button U4
     input rst_n,                // reset button P15
     input rx,                   // 输入 绑定到 N5
     output tx,                  // 输出 绑定到 T4
@@ -48,7 +49,12 @@ module AE86Car(
     output power_state,
     output reg [1:0] mode,
     output [1:0] manual_state,
-    output manual_move_forward_signal
+    output manual_move_forward_signal,
+
+    output front_detector,
+    output back_detector,
+    output left_detector,
+    output right_detector
 
    
     );
@@ -88,12 +94,13 @@ reg move_backward_signal;
 reg place_barrier_signal;
 reg destroy_barrier_signal;
 
-wire front_detector;
-wire back_detector;
-wire left_detector;
-wire right_detector;
+// 经测试，detector在碰到墙时为1
+// wire front_detector;
+// wire back_detector;
+// wire left_detector;
+// wire right_detector;
 
-parameter On =1'b1,Off=1'b0 ;
+// parameter On =1'b1,Off=1'b0 ;//弃用
 
 // 将power_state由power_module接管
 wire power_off_signal;
@@ -105,6 +112,11 @@ always @(posedge clk, posedge reset) begin
         mode <= 2'b00;
     end
     else begin 
+        //认为开着车是可以换模式的
+        // mode<=mode_selection;
+
+
+        //开着车不能换模式
         case (mode) 
             2'b00: begin 
                 if(mode_selection != 2'b00) begin 
@@ -116,7 +128,7 @@ always @(posedge clk, posedge reset) begin
 end
 
 // output switcher
-always @(posedge clk) begin
+always @(posedge clk,posedge reset) begin
     if(reset) begin
         turn_left_signal <= 0;
         turn_right_signal <= 0;
@@ -178,9 +190,25 @@ ManualDriving u_manualdriving(
 .manual_state(manual_state)
 );
 
-SemiAutoDriving u_semi_auto_driving(
-    .turn_left_Semi(turn_left_Semi),
-    .turn_right_Semi(turn_right_Semi),
+// SemiAutoDriving u_semi_auto_driving(
+//     .turn_left_Semi(turn_left),
+//     .turn_right_Semi(turn_right),
+//     .clk(clk),
+//     .turn_left_signal(semiauto_turn_left_signal),
+//     .turn_right_signal(semiauto_turn_right_signal),
+//     .move_forward_signal(semiauto_move_forward_signal),
+//     .move_backward_signal(semiauto_move_backward_signal),
+//     .reset(reset),
+//     .back_detector(back_detector),
+//     .left_detector(left_detector),
+//     .right_detector(right_detector),
+//     .front_detector(front_detector)
+// );
+
+semi_auto u_semi_auto(
+    .turn_left_semi(turn_left),
+    .turn_right_semi(turn_right),
+    .go_straight_semi(go_straight_semi),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),
@@ -192,6 +220,7 @@ SemiAutoDriving u_semi_auto_driving(
     .right_detector(right_detector),
     .front_detector(front_detector)
 );
+
 
 AutoDriving u_auto_driving(
     .reset(reset),

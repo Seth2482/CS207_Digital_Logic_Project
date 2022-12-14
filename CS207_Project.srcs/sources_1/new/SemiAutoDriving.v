@@ -40,10 +40,10 @@ module SemiAutoDriving(
                     // 010 waiting for command
                     // 100 turn left 
                     // 001 turn right
-                    //011 turning right
-                    //110 turning left
+                    // 011 turning right
+                    // 110 turning left
                     // 111 go straight
-    clk_divider #(.period(20000000)) cd5(clk, ~(activation_state == 2'b01), clk_5hz);
+    clk_divider #(.period(20000000)) cd5(.clk(clk), .reset(reset), .clk_out(clk_5hz));//~(activation_state == 2'b01)
 
     always @(posedge clk) 
     begin
@@ -105,9 +105,9 @@ always@(posedge clk_5hz)
        begin
         case(state)
             3'b001: state<= 3'b011;
-            3'b011: state<= 3'b000;
+            3'b011: state<= 3'b010;
             3'b100: state<= 3'b110;
-            3'b110: state<= 3'b000;
+            3'b110: state<= 3'b010;
             3'b111: state<= 3'b000;
 
         endcase
@@ -118,10 +118,11 @@ always@(posedge clk_5hz)
     always@ (posedge clk)// 灯是怎么亮的
     begin
         case(state)
-        3'b011:turn_right_signal<=1'b1;
-        3'b110:turn_left_signal<=1'b1;
-        3'b111:move_forward_signal<=1'b1;
-        3'b000:move_forward_signal<=1'b1;
+        3'b011:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b010;
+        3'b110:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b001;
+        3'b111:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b100;
+        3'b000:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;
+        default:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;
         endcase
     end
 
