@@ -29,7 +29,7 @@
 *.sdf
 
 ## sim dump
-*.vcd
+*gitcd
 *.saif
 *.tcf
 *.wdb
@@ -45,11 +45,11 @@ unisims
 *.lib
 
 ## dirs
-CS207_Project.cache/*
-CS207_Project.hw/*
-CS207_Project.ip_user_files/*
-CS207_Project.runs/*
-CS207_Project.sim/*
+CS207_Project.cache/
+CS207_Project.hw/
+CS207_Project.ip_user_files/
+CS207_Project.runs/
+CS207_Project.sim/
 
 ###### for Xilinx Vivado|ISE
 .Xil/

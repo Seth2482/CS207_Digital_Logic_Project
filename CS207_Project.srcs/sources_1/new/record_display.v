@@ -30,8 +30,8 @@ module record_display(input clk,
     reg [3:0] num0, num1, num2, num3, num4, num5, num6; // num6 is MSB
     reg [3:0] state;
     reg [3:0] current_num0, current_num1;
-    wire clk_100hz;
-    clk_divider #(.period(1_0000_0000)) u_clk_100hz(.clk(clk), .reset(reset), .clk_out(clk_100hz));
+    wire clk_1000hz;
+    clk_divider #(.period(1_000_00)) u_clk_1000hz(.clk(clk), .reset(reset), .clk_out(clk_1000hz));
     
     number_translator u_number_translator1(.number(current_num0), .reset(reset), .seg_out(seg_out0));
     number_translator u_number_translator2(.number(current_num1), .reset(reset), .seg_out(seg_out1));
@@ -58,7 +58,7 @@ module record_display(input clk,
         end
     end
     
-    always@(posedge clk_100hz) begin
+    always@(posedge clk_1000hz) begin
         if (reset) begin
             state <= 4'b1000;
         end
