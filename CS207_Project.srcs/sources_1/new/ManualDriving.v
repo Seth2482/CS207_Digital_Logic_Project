@@ -70,6 +70,7 @@ module ManualDriving(
             
 
         end
+        else
         begin
             case (manual_state)
             not_starting:
