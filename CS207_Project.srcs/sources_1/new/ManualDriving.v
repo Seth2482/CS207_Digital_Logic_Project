@@ -39,7 +39,8 @@ module ManualDriving(
     //reg[1:0] manual_state;移至output
     
     parameter not_starting=2'b00,starting=2'b01,moving=2'b10;
-    reg break=0;
+   
+    reg prev_shift;
 
 
     always @(posedge clk) begin
@@ -51,6 +52,7 @@ module ManualDriving(
     
             power_off_manual<=0;//手动挡中更改power状态
             manual_state<=not_starting;
+            prev_shift<=0;
             
 
 
@@ -64,6 +66,7 @@ module ManualDriving(
     
             power_off_manual<=0;
             manual_state<=not_starting;
+            prev_shift<=0;
             
 
         end
@@ -79,30 +82,40 @@ module ManualDriving(
                 manual_state<=not_starting;
             
             end
+            else begin
+                manual_state<=manual_state;
+            end
             starting:
             if ({throttle,brake,clutch}==3'b100) begin
                 manual_state<=moving;
+                prev_shift<=shift;
             end
             else if (brake) begin
                 manual_state<=not_starting;
             end
-            
+            else begin
+                manual_state<=manual_state;
+            end
             moving:
             if (~throttle||clutch) begin
                 manual_state<=starting;
             end
-            // else if ({shift,clutch}==2'b10) begin
-            //     power_off_manual<=1'b1;
-            //     manual_state<=not_starting;
-            // end
-            else if (break) begin
+            
+            else if(prev_shift!=shift) begin
                 power_off_manual<=1'b1;
                 manual_state<=not_starting;
-                
             end
+
+
+
+
             else if(brake) begin
                 manual_state<= not_starting;
             end
+            else begin
+                manual_state<=manual_state;
+            end
+            default:manual_state<=manual_state;
             endcase
 
         end
@@ -135,40 +148,7 @@ module ManualDriving(
 
     end
 
-    //倒车
     
-    // always @(shift) begin
-    //     if(manual_state==moving&&shift) begin
-    //         break<=1;
-    //     end else if (reset||~power_state) begin
-    //         break<=0;
-    //     end
-    //      else begin
-    //         break<=break;
-
-    //     end
-
-    // end        
-
-
-
-
-        // if(manual_state==moving)begin
-        //     case ({turn_left,turn_right,shift})//左转右转倒车
-        //         3'b000: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;//左右前后
-        //         3'b001: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
-        //         3'b010: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0110;
-        //         3'b011: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0101;
-        //         3'b100: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1010;
-        //         3'b101: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b1001;
-        //         3'b110: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0010;
-        //         3'b111: {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0001;
-        //         default:{turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<={turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal};
-        //     endcase
-        // end  
-        // else begin
-        //     {turn_left_signal,turn_right_signal,move_forward_signal,move_backward_signal}<=4'b0000;
-        // end
         
 
 
