@@ -176,7 +176,7 @@ ManualDriving u_manualdriving(
 .mode(mode),
 .clk(clk),
 .reset(reset),
-.throttle(throttle),
+.throttle_in(throttle),
 .brake(brake),
 .clutch(clutch),
 .shift(reverse_gear),

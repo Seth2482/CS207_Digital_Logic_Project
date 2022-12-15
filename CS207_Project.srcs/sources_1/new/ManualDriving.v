@@ -26,7 +26,7 @@ module ManualDriving(
     input clk,
     input reset,
 
-    input throttle,brake,clutch,shift,turn_left,turn_right,
+    input throttle_in,brake,clutch,shift,turn_left,turn_right,
 
     output reg turn_left_signal,
     output reg turn_right_signal,
@@ -41,6 +41,15 @@ module ManualDriving(
     parameter not_starting=2'b00,starting=2'b01,moving=2'b10;
    
     reg prev_shift;
+    reg throttle;
+    always @(posedge clk) begin
+        if(brake)begin
+            throttle<=1'b0;
+        end else begin
+        throttle<=throttle_in;
+        end
+    end
+
 
 
     always @(posedge clk) begin
@@ -77,12 +86,18 @@ module ManualDriving(
             if ({throttle,brake,clutch}==3'b101) begin
 
                 manual_state<=starting;
+                prev_shift<=shift;
             end
             else if({throttle,clutch}==2'b10) begin
                 power_off_manual<=1'b1;
                 manual_state<=not_starting;
-            
+                
             end
+            else if(~clutch&&prev_shift!=shift) begin
+                power_off_manual<=1'b1;
+                manual_state<=not_starting;
+            end
+            
             else begin
                 manual_state<=manual_state;
             end
@@ -93,6 +108,11 @@ module ManualDriving(
             end
             else if (brake) begin
                 manual_state<=not_starting;
+                prev_shift<=shift;
+            end
+            else if(~clutch&&prev_shift!=shift) begin
+                power_off_manual<=1'b1;
+                manual_state<=not_starting;
             end
             else begin
                 manual_state<=manual_state;
@@ -100,11 +120,13 @@ module ManualDriving(
             moving:
             if (~throttle||clutch) begin
                 manual_state<=starting;
+                prev_shift<=shift;
             end
             
             else if(prev_shift!=shift) begin
                 power_off_manual<=1'b1;
                 manual_state<=not_starting;
+                
             end
 
 
@@ -112,9 +134,11 @@ module ManualDriving(
 
             else if(brake) begin
                 manual_state<= not_starting;
+                prev_shift<=shift;
             end
             else begin
                 manual_state<=manual_state;
+
             end
             default:manual_state<=manual_state;
             endcase
