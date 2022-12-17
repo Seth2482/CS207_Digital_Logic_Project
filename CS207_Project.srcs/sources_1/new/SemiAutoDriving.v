@@ -43,9 +43,9 @@ module SemiAutoDriving(
                     // 011 turning right
                     // 110 turning left
                     // 111 go straight
-    clk_divider #(.period(20000000)) cd5(.clk(clk), .reset(reset), .clk_out(clk_5hz));//~(activation_state == 2'b01)
+    clk_divider #(.period(10000000)) cd5(.clk(clk), .reset(reset), .clk_out(clk_10hz));//~(activation_state == 2'b01)
 
-    always @(posedge clk) 
+    always @(posedge clk_10hz) 
     begin
     if (reset) begin
         state <= 3'b000;
@@ -53,73 +53,87 @@ module SemiAutoDriving(
     else begin
         case(state)
         3'b000: begin 
-        //      if(~front_detector&&~left_detector&&~right_detector||front_detector&&~left_detector&&~right_detector||
-        // left_detector&&~right_detector&&~front_detector||right_detector&&~left_detector&&~front_detector)//遇到了路口  4种情况
-        if(~(~front_detector&&left_detector&&right_detector))///???????????????????????????????????????????
+        if(~(~front_detector&&left_detector&&right_detector))
                 begin
                     state <= 3'b010;// waiting for command
                 end
         end
-        3'b010: begin // command state
-            if(go_straight_Semi)
-            begin
-                state<=3'b111;// also go straight.
-            end
-            if(turn_left_Semi)
-            begin
-                state<=3'b100;
-            end
-            if(turn_right_Semi)
-            begin
-                state<=3'b001;
-            end
+        3'b010: begin
+             if(turn_left_Semi&&~left_detector)
+             begin
+                state <= 3'b001;
+             end
+             if(turn_left_Semi&&left_detector)
+             begin
+                state <= 3'b010;
+             end
+             if(turn_right_Semi&&~right_detector)
+             begin
+                state <= 3'b100;
+             end
+             if(turn_right_Semi&&right_detector)
+             begin
+                state <= 3'b010;
+             end
+             if(go_straight_Semi&&~front_detector)
+             begin
+                state <= 3'b000;
+             end
+             if(go_straight_Semi&&front_detector)
+             begin
+                state <= 3'b010;
+             end
         end
-        3'b001: begin
-            if(right_detector)//1 conveys there is an obstical
-            begin//有没有需要把小车转回去？
-                state<=3'b010;// waiting for 
-            end
-        end
-        3'b100: begin
-            if(left_detector)
-            begin
-                state<=3'b010;// waiting for 
-            end
 
-        end
-        3'b111: begin
-            if(front_detector)
-            begin
-                state<=3'b010;// waiting for 
-            end
-            // if(~front_detector)
-            // begin
-            //     state<=3'b000;//go straigt
-            // end
-        end
+       
         endcase
     end
 end
 
-always@(posedge clk_5hz)
-       begin
-        case(state)
-            3'b001: state<= 3'b011;
-            3'b011: state<= 3'b010;
-            3'b100: state<= 3'b110;
-            3'b110: state<= 3'b010;
-            3'b111: state<= 3'b000;
+//  end
+ // 3'b010: begin // command state
+        //     if(go_straight_Semi)
+        //     begin
+        //         state<=3'b111;// also go straight.
+        //     end
+        //     if(turn_left_Semi)
+        //     begin
+        //         state<=3'b100;
+        //     end
+        //     if(turn_right_Semi)
+        //     begin
+        //         state<=3'b001;
+        //     end
+        // end
+        // 3'b001: begin
+        //     if(right_detector)//1 conveys there is an obstical
+        //     begin//有没有需要把小车转回去？
+        //         state<=3'b010;// waiting for 
+        //     end
+        // end
+        // 3'b100: begin
+        //     if(left_detector)
+        //     begin
+        //         state<=3'b010;// waiting for 
+        //     end
 
-        endcase
-
- end
-
+        // end
+        // 3'b111: begin
+        //     if(front_detector)
+        //     begin
+        //         state<=3'b010;// waiting for 
+        //     end
+        //     // if(~front_detector)
+        //     // begin
+        //     //     state<=3'b000;//go straigt
+        //     // end
+        // end
 
     always@ (posedge clk)// 灯是怎么亮的
     begin
         case(state)
-        3'b011:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b010;
-        3'b110:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b001;
+        3'b001:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b010;
+        3'b100:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b001;
         3'b111:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b100;
         3'b000:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;
         default:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;

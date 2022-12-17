@@ -39,7 +39,7 @@ module semi_auto(input turn_left_semi,            // 左转 button
     reg [3:0] pos;
     always @(posedge clk) begin
         if (reset) begin
-            semi_state <= 2'b00;
+            semi_state <= 2'b11;
             pos        <= {back_detector,front_detector,left_detector,right_detector};
         end
         else begin
