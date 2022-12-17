@@ -59,32 +59,37 @@ module SemiAutoDriving(
                 end
         end
         3'b010: begin
-             if(turn_left_Semi&&~left_detector)
-             begin
+            if(turn_left_Semi)
+            begin
                 state <= 3'b001;
-             end
-             if(turn_left_Semi&&left_detector)
-             begin
-                state <= 3'b010;
-             end
-             if(turn_right_Semi&&~right_detector)
-             begin
+            end
+            if(turn_right_Semi)
+            begin
                 state <= 3'b100;
-             end
-             if(turn_right_Semi&&right_detector)
-             begin
-                state <= 3'b010;
-             end
-             if(go_straight_Semi&&~front_detector)
-             begin
-                state <= 3'b000;
-             end
-             if(go_straight_Semi&&front_detector)
-             begin
-                state <= 3'b010;
-             end
+            end
+            if(go_straight_Semi)
+            begin
+                state <= 3'b111;
+            end
         end
-
+        3'b001:begin
+            if(right_detector)
+            begin
+                state <= 3'b010;
+            end
+        end
+       3'b100:begin
+            if(left_detector)
+            begin
+                state <= 3'b010;
+            end
+        end
+        3'b111:begin
+            if(front_detector)
+            begin
+                state <= 3'b010;
+            end
+        end
        
         endcase
     end
