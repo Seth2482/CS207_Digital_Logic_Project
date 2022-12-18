@@ -35,9 +35,9 @@ module semi_auto(input turn_left_semi,            // 左转 button
                  input front_detector);
     reg [1:0] semi_state;//00 waiting,01 turning right
     //10 turning left,11 going straight
-    
+    clk_divider #(.period(10000000)) cd5(.clk(clk), .reset(reset), .clk_out(clk_10hz));
     reg [3:0] pos;
-    always @(posedge clk) begin
+    always @(posedge clk_10hz) begin
         if (reset) begin
             semi_state <= 2'b11;
             pos        <= {back_detector,front_detector,left_detector,right_detector};
