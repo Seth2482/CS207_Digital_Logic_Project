@@ -140,7 +140,7 @@ end
         3'b001:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b010;
         3'b100:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b001;
         3'b111:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b100;
-        3'b000:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;
+        3'b000:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b100;
         default:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;
         endcase
     end

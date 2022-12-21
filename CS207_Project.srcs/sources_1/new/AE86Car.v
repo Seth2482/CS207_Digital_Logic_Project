@@ -205,10 +205,11 @@ ManualDriving u_manualdriving(
 //     .front_detector(front_detector)
 // );
 
-semi_auto u_semi_auto(
+semi_auto2 u_semi_auto(
     .turn_left_semi(turn_left),
     .turn_right_semi(turn_right),
     .go_straight_semi(go_straight_semi),
+    .turn_back_semi(reverse_gear),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),
