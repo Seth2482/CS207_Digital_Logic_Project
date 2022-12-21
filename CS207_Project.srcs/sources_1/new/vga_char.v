@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module vga(
+module vga_char(
     input sys_clk, //系统时钟
     input sys_rst_n, //复位信号
     output vga_hs,
