@@ -190,9 +190,26 @@ ManualDriving u_manualdriving(
 .manual_state(manual_state)
 );
 
-// SemiAutoDriving u_semi_auto_driving(
-//     .turn_left_Semi(turn_left),
-//     .turn_right_Semi(turn_right),
+SemiAutoDriving u_semi_auto_driving(
+    .turn_left_Semi(turn_left),
+    .turn_right_Semi(turn_right),
+    .go_straight_Semi(go_straight_semi),
+    .clk(clk),
+    .turn_left_signal(semiauto_turn_left_signal),
+    .turn_right_signal(semiauto_turn_right_signal),
+    .move_forward_signal(semiauto_move_forward_signal),
+    .move_backward_signal(semiauto_move_backward_signal),
+    .reset(reset),
+    .back_detector(back_detector),
+    .left_detector(left_detector),
+    .right_detector(right_detector),
+    .front_detector(front_detector)
+);
+
+// semi_auto u_semi_auto(
+//     .turn_left_semi(turn_left),
+//     .turn_right_semi(turn_right),
+//     .go_straight_semi(go_straight_semi),
 //     .clk(clk),
 //     .turn_left_signal(semiauto_turn_left_signal),
 //     .turn_right_signal(semiauto_turn_right_signal),
