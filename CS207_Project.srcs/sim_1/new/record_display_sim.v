@@ -59,10 +59,20 @@ record_display  u_record_display (
     .seg_out0                ( seg_out0     [7:0]  ),
     .seg_out1                ( seg_out1     [7:0]  )
 );
-defparam u_record_display.u_clk_100hz.period = 100;
+defparam u_record_display.u_clk_1000hz.period = 10;
+
+reg [3:0] running_number = 4'b0000;
+reg [7:0] cnt = 0;
 initial
 begin
-    #(PERIOD*10) record = 24'd1234567;
+    while (cnt != 8'd7) begin
+        cnt = cnt + 1;
+        if(running_number != 4'd9) begin 
+            running_number = running_number + 1;
+        end else 
+            running_number = 4'b0000;
+        #1000 record = record * 10 + running_number;
+    end
     #10000 $finish;
 end
 
