@@ -32,7 +32,8 @@ module top(
             n8  <= 0;
         end
         begin
-            n8 <= record/1_000_0000%10;
+            // n8 <= record/1_000_0000%10;
+            n8 <= mode;
             n7 <= record/1_000_000%10;
             n6 <= record/1_000_00%10;
             n5 <= record/1_000_0%10;

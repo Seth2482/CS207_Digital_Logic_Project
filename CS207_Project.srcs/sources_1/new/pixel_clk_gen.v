@@ -5,7 +5,7 @@ module pixel_clk_gen(
     input video_on,
     //input tick_1Hz,       // use signal if blinking colon(s) is desired
     input [9:0] x, y,
-    input [3:0] nub2,num2,num3,num4,num5,num6,num7,num8,
+    input [3:0] num1,num2,num3,num4,num5,num6,num7,num8,
     output reg [11:0] time_rgb
     );
   
@@ -66,7 +66,7 @@ module pixel_clk_gen(
     wire digit_bit;
     
     
-    assign char_addr_a1 = {3'b011, nub2};
+    assign char_addr_a1 = {3'b011, num1};
     assign row_addr_a1 = y[5:2];   // scaling to 32x64
     assign bit_addr_a1 = x[4:2];   // scaling to 32x64
     
