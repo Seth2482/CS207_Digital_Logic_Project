@@ -41,7 +41,11 @@ module record_module(input reset,
             record <= 0;
         end
         else begin
-        record = record + 1;
+            if (move_forward_signal||move_backward_signal) begin
+                record = record + 1;
+                
+            end
+        
         end
     end
 endmodule

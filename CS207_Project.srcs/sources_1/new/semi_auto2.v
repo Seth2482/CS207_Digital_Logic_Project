@@ -53,7 +53,7 @@ module semi_auto2(input turn_left_semi,            // 左转 button
         if (reset) begin
             counter<=8'b00000000;
             semi_state<=3'b011;
-            {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0000;
+            // {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0000;
 
 
 
