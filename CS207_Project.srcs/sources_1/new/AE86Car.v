@@ -54,8 +54,10 @@ module AE86Car(
     output front_detector,
     output back_detector,
     output left_detector,
-    output right_detector
-
+    output right_detector,
+    output [11:0] rgb,
+    output hsync,
+    output vsync
    
     );
 wire reset;
@@ -312,7 +314,10 @@ top top_vga(
     .clk_100MHz(clk),
     .reset(reset),
     .record(record),
-    .mode(mode)
+    .mode(mode),
+    .hsync(hsync),
+    .vsync(vsync),
+    .rgb(rgb)
 );
 
 
