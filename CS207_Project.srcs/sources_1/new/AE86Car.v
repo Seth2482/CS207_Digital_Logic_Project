@@ -222,22 +222,22 @@ SemiAutoDriving u_semi_auto_driving(
 //     .front_detector(front_detector)
 // );
 
-semi_auto2 u_semi_auto(
-    .turn_left_semi(turn_left),
-    .turn_right_semi(turn_right),
-    .go_straight_semi(go_straight_semi),
-    .turn_back_semi(reverse_gear),
-    .clk(clk),
-    .turn_left_signal(semiauto_turn_left_signal),
-    .turn_right_signal(semiauto_turn_right_signal),
-    .move_forward_signal(semiauto_move_forward_signal),
-    .move_backward_signal(semiauto_move_backward_signal),
-    .reset(reset),
-    .back_detector(back_detector),
-    .left_detector(left_detector),
-    .right_detector(right_detector),
-    .front_detector(front_detector)
-);
+// semi_auto2 u_semi_auto(
+//     .turn_left_semi(turn_left),
+//     .turn_right_semi(turn_right),
+//     .go_straight_semi(go_straight_semi),
+//     .turn_back_semi(reverse_gear),
+//     .clk(clk),
+//     .turn_left_signal(semiauto_turn_left_signal),
+//     .turn_right_signal(semiauto_turn_right_signal),
+//     .move_forward_signal(semiauto_move_forward_signal),
+//     .move_backward_signal(semiauto_move_backward_signal),
+//     .reset(reset),
+//     .back_detector(back_detector),
+//     .left_detector(left_detector),
+//     .right_detector(right_detector),
+//     .front_detector(front_detector)
+// );
 
 
 AutoDriving u_auto_driving(
@@ -306,6 +306,13 @@ SimulatedDevice simulate(
     .back_detector(back_detector),
     .left_detector(left_detector),
     .right_detector(right_detector)
+);
+
+top top_vga(
+    .clk_100MHz(clk),
+    .reset(reset),
+    .record(record),
+    .mode(mode)
 );
 
 
