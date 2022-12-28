@@ -48,12 +48,6 @@ end
 initial
 begin
     #(PERIOD*2) reset  =  0;
-    move_forward_signal = 1;
-    power_state = 1;
-    #49990 move_forward_signal = 0;
-    #100 move_backward_signal = 1;
-    #20010 move_backward_signal = 0;
-    #20 power_state = 0;
 end
 
 record_module  u_record_module (
@@ -67,5 +61,16 @@ record_module  u_record_module (
 
     .record                  ( record                [7:0] )
 );
-defparam u_record_module.u_clk_2hz.period = 5_00;
+defparam u_record_module.u_clk_2hz.period = 5;
+
+
+initial
+begin 
+    while({power_state, move_forward_signal, move_backward_signal, turn_left_signal, turn_right_signal} != 5'b11111) begin 
+        #100 {power_state, move_forward_signal, move_backward_signal, turn_left_signal, turn_right_signal} = {power_state, move_forward_signal, move_backward_signal, turn_left_signal, turn_right_signal} + 1;
+    end
+    #100 power_state = 1'b0;
+    #100 $finish();
+end
 endmodule
+

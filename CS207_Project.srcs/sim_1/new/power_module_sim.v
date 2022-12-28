@@ -45,15 +45,6 @@ end
 initial
 begin
     #(PERIOD*2) reset  =  0;
-
-    #(40) power_on <= 1;
-    #(40) power_on <= 0;
-
-    #(40) power_on <= 1;
-    #(20010) power_on <= 0;
-
-    #(2000) power_off <= 1;
-    #(20) power_off <= 0;
 end
 
 power_module  u_power_module (
@@ -65,5 +56,22 @@ power_module  u_power_module (
     .power_state             ( power_state   )
 );
 defparam u_power_module.cd1.period = 1_0;
+
+initial
+begin 
+    #(40) power_on <= 1;
+    #(40) power_on <= 0;
+
+    #(40) power_on <= 1;
+    #(10000) power_on <= 0;
+
+    #(100) power_on <= 1;
+    #(10200) power_on <= 0;
+
+    #(2000) power_off <= 1;
+    #(100) power_off <= 0;
+
+    #(20) $finish();
+end
 
 endmodule

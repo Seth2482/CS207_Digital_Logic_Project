@@ -23,6 +23,10 @@
 module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                        input turn_right_Semi,           // 右转 switch
                        input go_straight_Semi,
+<<<<<<< HEAD
+=======
+                       input turn_back_Semi,
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
                        input clk,
                        output reg turn_left_signal,
                        output reg turn_right_signal,
@@ -41,6 +45,10 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
     // 011 buffer state
     // 100 force go straight
     // 111 auto go straight
+<<<<<<< HEAD
+=======
+    // 101 turn back
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
     clk_divider #(.period(1_0000_00)) cd5(.clk(clk), .reset(reset), .clk_out(clk_100hz));//~(activation_state == 2'b01)
     reg [3:0] pos;
     reg [7:0] counter;
@@ -50,7 +58,11 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
             pos <= 4'b1111;
         end
         else begin
+<<<<<<< HEAD
             pos <= {front_detector,back_detector,left_detector,right_detector};
+=======
+            pos <= {front_detector,back_detector,left_detector,right_detector};//前后左右
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
         end
     end
     
@@ -76,6 +88,13 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                         Semi_state <= 3'b010;
                         counter    <= 8'b0;
                     end
+<<<<<<< HEAD
+=======
+                    else if (turn_back_Semi) begin
+                        Semi_state <= 3'b101;
+                        counter    <= 8'b0;
+                    end
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
                     else Semi_state <= 3'b000;
                 end
                 // turn left
@@ -151,6 +170,19 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                     else
                     counter <= counter + 1;
                 end
+<<<<<<< HEAD
+=======
+
+                // turn back
+                3'b101:begin 
+                    if (counter == 8'd180) begin
+                        Semi_state <= 3'b011;
+                        counter    <= 8'b0;
+                    end
+                    else
+                    counter <= counter + 1;
+                end
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
                 
                 // auto go straight
                 3'b111: begin
@@ -170,6 +202,7 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                     Semi_state = 3'b011;
             endcase
         end
+<<<<<<< HEAD
     end
     
     always @(posedge clk, posedge reset) begin
@@ -195,3 +228,32 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
     end
     
 endmodule
+=======
+    end
+    
+    always @(posedge clk, posedge reset) begin
+        if (reset) begin
+            {move_forward_signal,move_backward_signal,turn_right_signal,turn_left_signal} <= 3'b0000;
+        end
+        else begin
+            case(Semi_state)
+                // waiting for command
+                3'b000:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
+                // turn left
+                3'b001:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b001;
+                // turn right
+                3'b010:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
+                // buffer state
+                3'b011:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
+                // force go straight
+                3'b100:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
+                // turn back
+                3'b101:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
+                // auto go straight
+                3'b111:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
+            endcase
+        end
+    end
+    
+endmodule
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2

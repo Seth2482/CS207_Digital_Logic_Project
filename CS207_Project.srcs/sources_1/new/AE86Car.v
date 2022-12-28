@@ -140,32 +140,42 @@ always @(posedge clk,posedge reset) begin
         destroy_barrier_signal <= 0;
     end
     else begin
-        case(mode) 
-            2'b01: begin
-                turn_left_signal <= manual_turn_left_signal;
-                turn_right_signal <= manual_turn_right_signal;
-                move_backward_signal <= manual_move_backward_signal;
-                move_forward_signal <= manual_move_forward_signal;
-                place_barrier_signal <= 0;
-                destroy_barrier_signal <= 0;
-            end
-            2'b10: begin
-                turn_left_signal <= semiauto_turn_left_signal;
-                turn_right_signal <= semiauto_turn_right_signal;
-                move_backward_signal <= semiauto_move_backward_signal;
-                move_forward_signal <= semiauto_move_forward_signal;
-                place_barrier_signal <= 0;
-                destroy_barrier_signal <= 0;
-            end
-            2'b11: begin 
-                turn_left_signal <= auto_turn_left_signal;
-                turn_right_signal <= auto_turn_right_signal;
-                move_backward_signal <= auto_move_backward_signal;
-                move_forward_signal <= auto_move_forward_signal;
-                place_barrier_signal <= auto_place_barrier_signal;
-                destroy_barrier_signal <= auto_destroy_barrier_signal;
-            end
-        endcase
+        if(power_state) begin
+            case(mode) 
+                2'b01: begin
+                    turn_left_signal <= manual_turn_left_signal;
+                    turn_right_signal <= manual_turn_right_signal;
+                    move_backward_signal <= manual_move_backward_signal;
+                    move_forward_signal <= manual_move_forward_signal;
+                    place_barrier_signal <= 0;
+                    destroy_barrier_signal <= 0;
+                end
+                2'b10: begin
+                    turn_left_signal <= semiauto_turn_left_signal;
+                    turn_right_signal <= semiauto_turn_right_signal;
+                    move_backward_signal <= semiauto_move_backward_signal;
+                    move_forward_signal <= semiauto_move_forward_signal;
+                    place_barrier_signal <= 0;
+                    destroy_barrier_signal <= 0;
+                end
+                2'b11: begin 
+                    turn_left_signal <= auto_turn_left_signal;
+                    turn_right_signal <= auto_turn_right_signal;
+                    move_backward_signal <= auto_move_backward_signal;
+                    move_forward_signal <= auto_move_forward_signal;
+                    place_barrier_signal <= auto_place_barrier_signal;
+                    destroy_barrier_signal <= auto_destroy_barrier_signal;
+                end
+            endcase
+        end
+        else begin 
+            turn_left_signal <= 0;
+            turn_right_signal <= 0;
+            move_backward_signal <= 0;
+            move_forward_signal <= 0;
+            place_barrier_signal <= 0;
+            destroy_barrier_signal <= 0;
+        end
     end
 end
 
@@ -196,6 +206,7 @@ SemiAutoDriving u_semi_auto_driving(
     .turn_left_Semi(turn_left),
     .turn_right_Semi(turn_right),
     .go_straight_Semi(go_straight_semi),
+    .turn_back_Semi(reverse_gear),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),
@@ -224,6 +235,7 @@ SemiAutoDriving u_semi_auto_driving(
 //     .front_detector(front_detector)
 // );
 
+<<<<<<< HEAD
 // semi_auto2 u_semi_auto(
 //     .turn_left_semi(turn_left),
 //     .turn_right_semi(turn_right),
@@ -241,6 +253,8 @@ SemiAutoDriving u_semi_auto_driving(
 //     .front_detector(front_detector)
 // );
 
+=======
+>>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
 
 AutoDriving u_auto_driving(
     .reset(reset),

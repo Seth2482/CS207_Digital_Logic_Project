@@ -53,7 +53,7 @@ module power_module(input clk,
                         activation_state <= 2'b00;
                         timer <= 0;
                     end
-                    else if(timer != 7'o100) begin 
+                    else if(timer != 7'd100) begin 
                         timer <= timer + 1;
                     end
                     else begin
