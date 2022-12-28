@@ -21,84 +21,154 @@
 
 
 module SemiAutoDriving(
-    input turn_left_Semi,            // 左转 switch
-    input turn_right_Semi,           // 右转 switch
-    input go_straight_Semi,
-    input clk,
-    output reg turn_left_signal,
-    output reg turn_right_signal,
-    output reg move_forward_signal,
-    output reg move_backward_signal,
-    input reset,
-    input back_detector,
-    input left_detector,
-    input right_detector,
-    input front_detector);
-    wire clk_10hz;
-    reg [2:0] Semi_state;// 000 auto drive
-                    // 010 waiting for command
-                    // 100 turn left 
-                    // 001 turn right
-                    // 011 turning right
-                    // 110 turning left
-                    // 111 go straight
-    clk_divider #(.period(10000000)) cd5(.clk(clk), .reset(reset), .clk_out(clk_10hz));//~(activation_state == 2'b01)
-    reg [3:0] pos;
-    always @(posedge clk_10hz) 
-    begin
-        if(reset)begin
-            Semi_state <= 3'b000;
-            pos<={back_detector,front_detector,left_detector,right_detector};
+input clk,
+input semi_auto_mode_on,
+input reset,
+input front_detector,
+input back_detector,
+input left_detector,
+input right_detector,
 
-        end
-        else begin
-            case(Semi_state)
-                3'b010:begin
-                if(go_straight_Semi)begin
-                    Semi_state <= 3'b000;
-                end
-                else if(turn_left_Semi) begin
-                    Semi_state <= 3'b100;
-                end
-                else if(turn_right_Semi)begin
-                    Semi_state <= 3'b001;
-                end
-                else Semi_state <= Semi_state;
-                pos <= {back_detector,front_detector,left_detector,right_detector};
-                end
-                3'b001:
-                if (pos!= {back_detector,front_detector,left_detector,right_detector}) begin
-                    Semi_state <= 3'b010;
-                end
-                
-                3'b100:
-                if (pos!= {back_detector,front_detector,left_detector,right_detector}) begin
-                    Semi_state <= 3'b010;
-                end
-                
-                3'b000:
-                if (front_detector||~left_detector||~right_detector) begin
-                    Semi_state <= 3'b010;
-                end
-            endcase
-            
-        case(Semi_state)
-        3'b001:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b010;
-        3'b100:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b001;
-        3'b000:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b100;
-        3'b010:{move_forward_signal,turn_right_signal,turn_left_signal}<=3'b000;
-        default{move_forward_signal,turn_right_signal,turn_left_signal}<={move_forward_signal,turn_right_signal,turn_left_signal};
-        endcase
-        end 
-    
+input turn_left_Semi,
+input turn_right_Semi,
+input go_straight_Semi,
+input turn_back_Semi,
+
+output reg move_forward_signal,
+output reg turn_left_signal,
+output reg turn_right_signal,
+output reg move_backward_signal
+);
+
+reg [2:0] state;
+//000 Wait-for-command,001 Turn-Right,010 Turn-Left,011 Go-Straight,100 Go-Back
+reg wall;
+
+reg [31:0] counter;
+wire clk_100hz;
+clk_div_100HZ cl(.clk(clk),.clk_100HZ(clk_100hz));
+
+wire [3:0] detectors;
+assign detectors={back_detector,front_detector,left_detector,right_detector};
+
+
+always @(posedge clk_100hz) begin
+    if (reset) begin
+        state<=3'b000;
+        wall<=0;
+        counter<=8'b00000000;
+        {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0000;
     end
+    else if(semi_auto_mode_on==1'b1)begin
+        counter<=counter+1'b1;
+        case(state)
+            3'b000:begin
+                if (go_straight_Semi) begin
+                    state <= 3'b011;
+                    counter<=8'b00000000;
+                wall<=0;
+                end
+                else if (turn_right_Semi) begin
+                    state <= 3'b001;
+                    counter<=8'b00000000;
+                wall<=0;
+                end
+                else if (turn_left_Semi) begin
+                    state <= 3'b010;
+                    counter<=8'b00000000;
+                wall<=0;
+                end
+                else if(turn_back_Semi) begin
+                    state<=3'b100;
+                    counter<=8'b00000000;
+                wall<=0;
+                end
+            end
+            3'b001:begin
+                if (counter>=8'd90) begin
+                    // if (front_detector==0) begin
+                        state <= 3'b011;
+                        counter<=8'b00000000;
+                wall<=0;
+                    // end
+                end
+            end
+            3'b010:begin
+                if (counter>=8'd90) begin
+                    // if (front_detector==0) begin
+                        state <= 3'b011;
+                        counter<=8'b00000000;
+                wall<=0;
+                    // end
+                end
+            end
+            3'b011:begin
+                if (!wall) begin
+                        if(counter>=8'd45) begin
+                            if (detectors==4'b0100||detectors==4'b0010||detectors==4'b0001||detectors==4'b0000) begin
+                                state<=3'b000;
+                                counter<=8'b00000000;
+                            end 
+                        end
+                        if (detectors==4'b0110) begin
+                            counter<=0;
+                            wall<=1;
+                        end 
+                        else if (detectors==4'b0101) begin
+                            counter<=0;
+                            wall<=1;
+                        end
+                        else if (detectors==4'b0111) begin
+                            counter<=0;
+                            wall<=1;
+                        end
+                        else if(detectors==4'b0100) begin
+                            counter<=0;
+                            wall<=1;
+                        end
+                end
+                else if(wall) begin
+                    if(counter>=8'd00_000_006) begin
+                        if (detectors==4'b0110) begin                      
+                            state <= 3'b001;
+                            counter<=8'b00000000;
+                        end 
+                        else if (detectors==4'b0101) begin
+                            state <= 3'b010;
+                            counter<=8'b00000000;
+                        end
+                        else if (detectors==4'b0111) begin
+                            state<=3'b100;
+                            counter<=8'b00000000;
+                        end
+                        else if(detectors==4'b0100) begin
+                            state<=3'b000;
+                            counter<=8'b00000000;
+                        end
+                        // wall<=0;
+                    end
+                end
+            end
+            3'b100:begin
+                if (counter>=8'd180) begin
+                    state <= 3'b011;
+                    counter<=8'b00000000;
+                end               
+            end
+            endcase
 
-
-
-   // 灯是怎么亮的
-    
-       
-
-
-
+            case (state)
+                3'b000:  {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0000;
+                3'b001:  {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0001;
+                3'b010:  {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0010;
+                3'b011:  {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0100;
+                3'b100:  {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0001;
+                default: {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<={move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal};
+            endcase
+        end 
+        else begin
+            {move_backward_signal,move_forward_signal,turn_left_signal,turn_right_signal}<=4'b0000;
+        end
+    end
 endmodule
+
