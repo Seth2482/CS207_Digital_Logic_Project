@@ -33,7 +33,7 @@ module AutoDriving(input reset,
                    output reg place_barrier_signal,
                    output reg destroy_barrier_signal);
     wire clk_100hz;
-    reg [3:0] Semi_state;
+    reg [3:0] auto_state;
     // 000 Place barrier
     // 001 try go straight (after complex turn right)
     // 010 complex turn right (after complex state)
@@ -59,14 +59,14 @@ module AutoDriving(input reset,
     always @(posedge clk_100hz, posedge reset)
     begin
         if (reset)begin
-            Semi_state <= 4'b011;
+            auto_state <= 4'b011;
             counter    <= 8'b0;
         end
         else begin
-            case(Semi_state)
+            case(auto_state)
                 4'b000: begin
                     if (counter == 8'd10) begin
-                        Semi_state <= 3'b111; // continue to go straight
+                        auto_state <= 3'b111; // continue to go straight
                         counter    <= 8'b0;
                     end
                     else
@@ -77,10 +77,10 @@ module AutoDriving(input reset,
                 4'b001: begin
                     if (counter == 8'd30) begin
                         if (!front_detector) begin
-                            Semi_state <= 3'b100; // force go straight
+                            auto_state <= 3'b100; // force go straight
                         end
                         else begin
-                            Semi_state <= 3'b010; // continue to turn right
+                            auto_state <= 3'b010; // continue to turn right
                         end
                         counter <= 8'b0;
                     end
@@ -91,7 +91,7 @@ module AutoDriving(input reset,
                 // 010 complex turn right
                 4'b010: begin
                     if (counter == 8'd90) begin
-                        Semi_state <= 3'b001;
+                        auto_state <= 3'b001;
                         counter    <= 8'b0;
                     end
                     else
@@ -104,40 +104,40 @@ module AutoDriving(input reset,
                         counter <= 8'b0;
                         case(pos)
                             4'b0011: begin
-                                Semi_state <= 4'b111; // go straight
+                                auto_state <= 4'b111; // go straight
                             end
                             4'b0101: begin
-                                Semi_state <= 4'b111; // go straight
+                                auto_state <= 4'b111; // go straight
                             end
                             4'b0110: begin
-                                Semi_state <= 4'b111; // go straight
+                                auto_state <= 4'b111; // go straight
                             end
                             4'b1001: begin
-                                Semi_state <= 4'b110; // auto turn left
+                                auto_state <= 4'b110; // auto turn left
                             end
                             4'b1010: begin
-                                Semi_state <= 4'b101; // auto turn right
+                                auto_state <= 4'b101; // auto turn right
                             end
                             4'b1100: begin
-                                Semi_state <= 4'b010; // complex turn right
+                                auto_state <= 4'b010; // complex turn right
                             end
                             4'b0111: begin
-                                Semi_state <= 4'b111; // go straight
+                                auto_state <= 4'b111; // go straight
                             end
                             4'b1011: begin
-                                Semi_state <= 4'b1000; // turn around(auto turn right first)
+                                auto_state <= 4'b1000; // turn around(auto turn right first)
                             end
                             4'b1101: begin
-                                Semi_state <= 4'b110; // auto turn left
+                                auto_state <= 4'b110; // auto turn left
                             end
                             4'b1110: begin
-                                Semi_state <= 4'b101; // auto turn right
+                                auto_state <= 4'b101; // auto turn right
                             end
                             4'b0001: begin
-                                Semi_state <= 4'b100; // force go straight
+                                auto_state <= 4'b100; // force go straight
                             end
                             default: begin
-                                Semi_state <= 4'b010; // complex turn right
+                                auto_state <= 4'b010; // complex turn right
                             end
                         endcase
                     end
@@ -148,7 +148,7 @@ module AutoDriving(input reset,
                 // force go straight
                 4'b100: begin
                     if (counter == 8'd80) begin
-                        Semi_state <= 4'b000; // place barrier
+                        auto_state <= 4'b000; // place barrier
                         counter    <= 8'b0;
                     end
                     else
@@ -158,7 +158,7 @@ module AutoDriving(input reset,
                 // auto turn right
                 4'b101: begin
                     if (counter == 8'd90) begin
-                        Semi_state <= 4'b011;
+                        auto_state <= 4'b011;
                         counter    <= 8'b0;
                     end
                     else
@@ -168,7 +168,7 @@ module AutoDriving(input reset,
                 // auto turn left
                 4'b110: begin
                     if (counter == 8'd90) begin
-                        Semi_state <= 4'b011;
+                        auto_state <= 4'b011;
                         counter    <= 8'b0;
                     end
                     else
@@ -180,17 +180,17 @@ module AutoDriving(input reset,
                     if ((front_detector || pos == 4'b0001 || pos == 4'b0010 || pos == 4'b0000)) begin // 0.1s for correction
                         if (counter == 8'd10)
                         // go buffer state
-                            Semi_state <= 4'b011;
+                            auto_state <= 4'b011;
                         else
                             counter = counter + 1;
                             end else begin
-                            Semi_state <= 3'b111;
+                            auto_state <= 3'b111;
                             counter    <= 8'b0;
                     end
                 end
                 4'b1000: begin
                     if (counter == 8'd10) begin
-                        Semi_state <= 3'b101; // continue to turn around
+                        auto_state <= 3'b101; // continue to turn around
                         counter    <= 8'b0;
                     end
                     else
@@ -198,7 +198,7 @@ module AutoDriving(input reset,
                 end
                 default:
                 // handler exception
-                Semi_state = 3'b011;
+                auto_state = 3'b011;
             endcase
         end
     end
@@ -208,21 +208,21 @@ module AutoDriving(input reset,
             {move_forward_signal,move_backward_signal,turn_right_signal,turn_left_signal} <= 3'b0000;
         end
         else begin
-            if (Semi_state == 4'b000) begin
+            if (auto_state == 4'b000) begin
                 place_barrier_signal <= 1;
             end
             else begin
                 place_barrier_signal <= 0;
             end
 
-            if (Semi_state == 4'b1000) begin
+            if (auto_state == 4'b1000) begin
                 destroy_barrier_signal <= 1;
             end
             else begin
                 destroy_barrier_signal <= 0;
             end
             
-            case(Semi_state)
+            case(auto_state)
                 // try go straight
                 4'b001:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
                 // complex turn right
