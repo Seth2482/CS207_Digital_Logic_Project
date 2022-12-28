@@ -23,6 +23,7 @@
 module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                        input turn_right_Semi,           // 右转 switch
                        input go_straight_Semi,
+                       input turn_back_Semi,
                        input clk,
                        output reg turn_left_signal,
                        output reg turn_right_signal,
@@ -41,6 +42,7 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
     // 011 buffer state
     // 100 force go straight
     // 111 auto go straight
+    // 101 turn back
     clk_divider #(.period(1_0000_00)) cd5(.clk(clk), .reset(reset), .clk_out(clk_100hz));//~(activation_state == 2'b01)
     reg [3:0] pos;
     reg [7:0] counter;
@@ -50,7 +52,7 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
             pos <= 4'b1111;
         end
         else begin
-            pos <= {front_detector,back_detector,left_detector,right_detector};
+            pos <= {front_detector,back_detector,left_detector,right_detector};//前后左右
         end
     end
     
@@ -74,6 +76,10 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                     end
                     else if (turn_right_Semi)begin
                         Semi_state <= 3'b010;
+                        counter    <= 8'b0;
+                    end
+                    else if (turn_back_Semi) begin
+                        Semi_state <= 3'b101;
                         counter    <= 8'b0;
                     end
                     else Semi_state <= 3'b000;
@@ -151,6 +157,16 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                     else
                     counter <= counter + 1;
                 end
+
+                // turn back
+                3'b101:begin 
+                    if (counter == 8'd180) begin
+                        Semi_state <= 3'b011;
+                        counter    <= 8'b0;
+                    end
+                    else
+                    counter <= counter + 1;
+                end
                 
                 // auto go straight
                 3'b111: begin
@@ -188,6 +204,8 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 3'b011:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
                 // force go straight
                 3'b100:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
+                // turn back
+                3'b101:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
                 // auto go straight
                 3'b111:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
             endcase

@@ -204,6 +204,7 @@ SemiAutoDriving u_semi_auto_driving(
     .turn_left_Semi(turn_left),
     .turn_right_Semi(turn_right),
     .go_straight_Semi(go_straight_semi),
+    .turn_back_Semi(reverse_gear),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),
