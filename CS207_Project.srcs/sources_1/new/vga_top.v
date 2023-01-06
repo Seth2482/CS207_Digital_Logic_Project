@@ -5,6 +5,7 @@ module vga_top(
     input reset,            // btnC
     input [23:0] record,   //你传进来的东西
     input [1:0] mode,
+    input power_state,
     output hsync,           // to VGA Connector
     output vsync,           // to VGA Connector
     output [11:0] rgb       // to DAC, to VGA Connector
@@ -13,8 +14,8 @@ module vga_top(
     // Internal Connection Signals
     wire [9:0] w_x, w_y;
     wire video_on, p_tick;
-    reg [3:0]  n1,n2,n3,n4,n5,n6,n7,n8;
-    wire [3:0] num1,num2,num3,num4,num5,num6,num7,num8;
+    reg [3:0]  n1,n2,n3,n4,n5,n6,n7,n8,n9;
+    wire [3:0] num1,num2,num3,num4,num5,num6,num7,num8,num9;
     reg [11:0] rgb_reg;
     wire [11:0] rgb_next;
 
@@ -28,9 +29,11 @@ module vga_top(
             n6  <= 0;
             n7  <= 0;
             n8  <= 0;
+            n9  <= 0;
         end
         else begin
             // n8 <= record/1_000_0000%10;
+            n9 <= power_state;
             n8 <= mode;
             n7 <= record/1_000_000%10;
             n6 <= record/1_000_00%10;
@@ -73,6 +76,10 @@ module vga_top(
         .x(n8),
         .bcd_x(num8)
     );
+    BCD_conventer a9(
+        .x(n9),
+        .bcd_x(num9)
+    );
 
     
     // Instantiate Modules
@@ -100,6 +107,7 @@ module vga_top(
         .num6(num2),
         .num7(num1),
         .num8(num8),
+        .num9(num9),
         .time_rgb(rgb_next)
         );
  

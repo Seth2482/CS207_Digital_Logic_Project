@@ -5,7 +5,7 @@ module pixel_clk_gen(
     input video_on,
     //input tick_1Hz,       // use signal if blinking colon(s) is desired
     input [9:0] x, y,
-    input [3:0] num1,num2,num3,num4,num5,num6,num7,num8,
+    input [3:0] num1,num2,num3,num4,num5,num6,num7,num8,num9,
     output reg [11:0] time_rgb
     );
   
@@ -46,22 +46,38 @@ module pixel_clk_gen(
     localparam D1_Y_T = 192;
     localparam D1_Y_B = 256;
     
+    // localparam D2_X_L = 416;
+    // localparam D2_X_R = 447;
+    // localparam D2_Y_T = 192;
+    // localparam D2_Y_B = 256;
+    
+    // localparam E1_X_L = 448;
+    // localparam E1_X_R = 479;
+    // localparam E1_Y_T = 192;
+    // localparam E1_Y_B = 256;
+
     localparam D2_X_L = 416;
     localparam D2_X_R = 447;
-    localparam D2_Y_T = 192;
-    localparam D2_Y_B = 256;
+    localparam D2_Y_T = 256;
+    localparam D2_Y_B = 320;
+    
+    localparam E1_X_L = 448;
+    localparam E1_X_R = 479;
+    localparam E1_Y_T = 256;
+    localparam E1_Y_B = 320;
+
     
     // Object Status Signals
-    wire A1_on, A2_on, C1_on, B1_on, B2_on, C2_on, D1_on, D2_on;
+    wire A1_on, A2_on, C1_on, B1_on, B2_on, C2_on, D1_on, D2_on, E1_on;
     
     // ROM Interface Signals
     wire [10:0] rom_addr;
     reg [6:0] char_addr;   // 3'b011 + BCD value of time component
-    wire [6:0] char_addr_a1, char_addr_a2, char_addr_b1, char_addr_b2, char_addr_d1, char_addr_d2, char_addr_c1, char_addr_c2;
+    wire [6:0] char_addr_a1, char_addr_a2, char_addr_b1, char_addr_b2, char_addr_d1, char_addr_d2, char_addr_c1, char_addr_c2, char_addr_e1;
     reg [3:0] row_addr;    // row address of digit
-    wire [3:0] row_addr_a1, row_addr_a2, row_addr_b1, row_addr_b2, row_addr_d1, row_addr_d2, row_addr_c1, row_addr_c2;
+    wire [3:0] row_addr_a1, row_addr_a2, row_addr_b1, row_addr_b2, row_addr_d1, row_addr_d2, row_addr_c1, row_addr_c2, row_addr_e1;
     reg [2:0] bit_addr;    // column address of rom data
-    wire [2:0] bit_addr_a1, bit_addr_a2, bit_addr_b1, bit_addr_b2, bit_addr_d1, bit_addr_d2, bit_addr_c1, bit_addr_c2;
+    wire [2:0] bit_addr_a1, bit_addr_a2, bit_addr_b1, bit_addr_b2, bit_addr_d1, bit_addr_d2, bit_addr_c1, bit_addr_c2, bit_addr_e1;
     wire [7:0] digit_word;  // data from rom
     wire digit_bit;
     
@@ -97,6 +113,10 @@ module pixel_clk_gen(
     assign char_addr_d2 = {3'b011, num8};
     assign row_addr_d2 = y[5:2];   // scaling to 32x64
     assign bit_addr_d2 = x[4:2];   // scaling to 32x64
+
+    assign char_addr_e1 = {3'b011, num9};
+    assign row_addr_e1 = y[5:2];   // scaling to 32x64
+    assign bit_addr_e1 = x[4:2];   // scaling to 32x64
     
     // Instantiate digit rom
     num_digit_rom cdr(.clk(clk), .addr(rom_addr), .data(digit_word));
@@ -127,6 +147,8 @@ module pixel_clk_gen(
     assign D2_on =  (D2_X_L <= x) && (x <= D2_X_R) &&
                     (D2_Y_T <= y) && (y <= D2_Y_B);
                           
+    assign E1_on =  (E1_X_L <= x) && (x <= E1_X_R) &&
+                    (E1_Y_T <= y) && (y <= E1_Y_B); 
         
     // Mux for ROM Addresses and RGB    
     always @* begin
@@ -184,6 +206,13 @@ module pixel_clk_gen(
             char_addr = char_addr_d2;
             row_addr = row_addr_d2;
             bit_addr = bit_addr_d2;
+            if(digit_bit)
+                time_rgb = 12'hF00;     // red
+        end  
+        else if(E1_on) begin
+            char_addr = char_addr_e1;
+            row_addr = row_addr_e1;
+            bit_addr = bit_addr_e1;
             if(digit_bit)
                 time_rgb = 12'hF00;     // red
         end  
