@@ -31,13 +31,12 @@ module record_module(input reset,
                      input move_backward_signal,
                      output reg [23:0] record);
     wire clk_2hz;
-    clk_divider_with_enable u_clk_2hz(.clk(clk),
-    .reset(reset || ~power_state),
-    .enable(turn_left_signal || turn_right_signal || move_forward_signal || move_backward_signal || (mode == 2'b01 && manual_state == 2'b10)),
+    clk_divider u_clk_2hz(.clk(clk),
+    .reset(reset),
     .clk_out(clk_2hz));
     
     always @(negedge clk_2hz, posedge reset) begin
-        if (reset || ~power_state) begin
+        if (reset || !power_state) begin
             record <= 0;
         end
         else begin
