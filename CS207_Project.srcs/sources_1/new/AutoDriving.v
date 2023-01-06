@@ -76,13 +76,14 @@ module AutoDriving(input reset,
                 // 001 try go straight (after complex turn right)
                 4'b001: begin
                     if (counter == 8'd30) begin
+                        counter <= 8'b0;
                         if (!front_detector) begin
-                            auto_state <= 3'b100; // force go straight
+                            auto_state <= 4'b100; // force go straight
                         end
                         else begin
-                            auto_state <= 3'b010; // continue to turn right
+                            counter <= 8'b0;
+                            auto_state <= 4'b010; // continue to turn right
                         end
-                        counter <= 8'b0;
                     end
                     else
                     counter <= counter + 1;
@@ -91,7 +92,7 @@ module AutoDriving(input reset,
                 // 010 complex turn right
                 4'b010: begin
                     if (counter == 8'd90) begin
-                        auto_state <= 3'b001;
+                        auto_state <= 4'b001;
                         counter    <= 8'b0;
                     end
                     else
@@ -147,7 +148,12 @@ module AutoDriving(input reset,
                 
                 // force go straight
                 4'b100: begin
-                    if (counter == 8'd80) begin
+                    if(front_detector) begin 
+                        auto_state = 4'b011;
+                        counter    <= 8'b0;
+                    end
+
+                    if (counter == 8'd90) begin
                         auto_state <= 4'b000; // place barrier
                         counter    <= 8'b0;
                     end

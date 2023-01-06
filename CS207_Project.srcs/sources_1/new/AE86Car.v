@@ -47,15 +47,15 @@ module AE86Car(
 
 
 //测试输出
-    output power_state,
+    // output power_state,
     output reg [1:0] mode,
     output [1:0] manual_state,
-    output manual_move_forward_signal,
+    // output manual_move_forward_signal,
 
-    output front_detector,
-    output back_detector,
-    output left_detector,
-    output right_detector,
+    // output front_detector,
+    // output back_detector,
+    // output left_detector,
+    // output right_detector,
     output [11:0] rgb,
     output hsync,
     output vsync
@@ -65,7 +65,7 @@ wire reset;
 assign  reset = ~rst_n;
 
 // Global States
-//wire power_state;//电源状态
+wire power_state;//电源状态
 // reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
 // wire [1:0] manual_state;//手动驾驶中的not_starting,starting,moving状态
 
@@ -110,7 +110,8 @@ wire power_off_signal;
 wire power_off_manual;
 
 // mode selection
-always @(posedge clk, posedge reset) begin
+// always @(posedge clk, posedge reset) begin
+    always @(mode_selection,reset) begin
     if(reset) begin 
         mode <= 2'b00;
     end
