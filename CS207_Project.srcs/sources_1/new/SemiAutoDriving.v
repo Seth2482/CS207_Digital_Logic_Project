@@ -87,7 +87,7 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 // turn left
                 3'b001: begin
                     if (counter == 8'd90) begin
-                        Semi_state <= 3'b011; // buffer state
+                        Semi_state <= 3'b100; // force go straight
                         counter    <= 8'b0;
                     end
                     else
@@ -97,7 +97,7 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 // turn right
                 3'b010: begin 
                     if (counter == 8'd90) begin
-                        Semi_state <= 3'b011;
+                        Semi_state <= 3'b100; // force go straight
                         counter    <= 8'b0;
                     end
                     else
