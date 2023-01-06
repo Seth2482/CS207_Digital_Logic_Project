@@ -1,10 +1,8 @@
 `timescale 1ns / 1ps
 
-module top(
+module vga_top(
     input clk_100MHz,       // 100MHz on Basys 3
     input reset,            // btnC
-    // input tick_hr,          // btnL
-    // input tick_min,         // btnR  
     input [23:0] record,   //你传进来的东西
     input [1:0] mode,
     output hsync,           // to VGA Connector
@@ -15,8 +13,8 @@ module top(
     // Internal Connection Signals
     wire [9:0] w_x, w_y;
     wire video_on, p_tick;
-    reg  n1,n2,n3,n4,n5,n6,n7,n8;
-    wire num1,num2,num3,num4,num5,num6,num7,num8;
+    reg [3:0]  n1,n2,n3,n4,n5,n6,n7,n8;
+    wire [3:0] num1,num2,num3,num4,num5,num6,num7,num8;
     reg [11:0] rgb_reg;
     wire [11:0] rgb_next;
 
@@ -31,7 +29,7 @@ module top(
             n7  <= 0;
             n8  <= 0;
         end
-        begin
+        else begin
             // n8 <= record/1_000_0000%10;
             n8 <= mode;
             n7 <= record/1_000_000%10;
@@ -92,16 +90,15 @@ module top(
     pixel_clk_gen pclk(
         .clk(clk_100MHz),
         .video_on(video_on),
-        //.tick_1Hz(),
         .x(w_x),
         .y(w_y),
-        .num1(num1),
-        .num2(num2),
-        .num3(num3),
+        .num1(num7),
+        .num2(num6),
+        .num3(num5),
         .num4(num4),
-        .num5(num5),
-        .num6(num6),
-        .num7(num7),
+        .num5(num3),
+        .num6(num2),
+        .num7(num1),
         .num8(num8),
         .time_rgb(rgb_next)
         );

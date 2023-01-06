@@ -191,6 +191,6 @@ module pixel_clk_gen(
     
     // ROM Interface    
     assign rom_addr = {char_addr, row_addr};
-    // assign digit_bit = digit_word[~bit_addr];    //??用于反向的，我们应该不需要
+    assign digit_bit = digit_word[~bit_addr];
                           
 endmodule

@@ -304,7 +304,7 @@ SimulatedDevice simulate(
     .right_detector(right_detector)
 );
 
-top top_vga(
+vga_top vga_top(
     .clk_100MHz(clk),
     .reset(reset),
     .record(record),
