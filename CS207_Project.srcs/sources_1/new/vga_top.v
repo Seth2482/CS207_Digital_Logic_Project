@@ -93,7 +93,7 @@ module vga_top(
         .y(w_y)
         );
 
-    pixel_clk_gen pclk(
+    vga_pixel_generator u_vga_generator(
         .clk(clk_100MHz),
         .video_on(video_on),
         .x(w_x),

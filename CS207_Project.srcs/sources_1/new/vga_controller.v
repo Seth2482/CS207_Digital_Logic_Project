@@ -2,7 +2,7 @@
 
 
 module vga_controller(
-    input clk_100MHz,   // from Basys 3
+    input clk_100MHz,   
     input reset,        // system reset
     output video_on,    // ON while pixel counts for x and y and within display area
     output hsync,       // horizontal sync

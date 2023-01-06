@@ -52,10 +52,10 @@ module AE86Car(
     output [1:0] manual_state,
     // output manual_move_forward_signal,
 
-    // output front_detector,
-    // output back_detector,
-    // output left_detector,
-    // output right_detector,
+    output front_detector,
+    output back_detector,
+    output left_detector,
+    output right_detector,
     output [11:0] rgb,
     output hsync,
     output vsync
@@ -110,24 +110,13 @@ wire power_off_signal;
 wire power_off_manual;
 
 // mode selection
-// always @(posedge clk, posedge reset) begin
-    always @(mode_selection,reset) begin
+always @(mode_selection,reset) begin
     if(reset) begin 
         mode <= 2'b00;
     end
     else begin 
-        //认为开着车是可以换模式的
-        mode<=mode_selection;
-
-
-        //开着车不能换模式
-        // case (mode) 
-        //     2'b00: begin 
-        //         if(mode_selection != 2'b00) begin 
-        //             mode <= mode_selection;
-        //         end
-        //     end
-        // endcase
+        // 只有在静止状态可以切换模式
+        mode<= (turn_left_signal || turn_right_signal || move_forward_signal || move_backward_signal || power_state)? mode : mode_selection;
     end
 end
 
@@ -245,6 +234,7 @@ AutoDriving u_auto_driving(
     .back_detector(back_detector),
     .right_detector(right_detector),
     .left_detector(left_detector),
+    .power_state(power_state),
     .turn_left_signal(auto_turn_left_signal),
     .turn_right_signal(auto_turn_right_signal),
     .move_backward_signal(auto_move_backward_signal),

@@ -26,6 +26,7 @@ module AutoDriving(input reset,
                    input back_detector,
                    input right_detector,
                    input left_detector,
+                   input power_state,
                    output reg turn_left_signal,
                    output reg turn_right_signal,
                    output reg move_forward_signal,
@@ -58,7 +59,7 @@ module AutoDriving(input reset,
     
     always @(posedge clk_100hz, posedge reset)
     begin
-        if (reset)begin
+        if (reset || !power_state)begin
             auto_state <= 4'b011;
             counter    <= 8'b0;
         end
@@ -164,7 +165,7 @@ module AutoDriving(input reset,
                 // auto turn right
                 4'b101: begin
                     if (counter == 8'd90) begin
-                        auto_state <= 4'b011;
+                        auto_state <= 4'b001;
                         counter    <= 8'b0;
                     end
                     else
@@ -174,7 +175,7 @@ module AutoDriving(input reset,
                 // auto turn left
                 4'b110: begin
                     if (counter == 8'd90) begin
-                        auto_state <= 4'b011;
+                        auto_state <= 4'b001;
                         counter    <= 8'b0;
                     end
                     else
@@ -189,9 +190,10 @@ module AutoDriving(input reset,
                             auto_state <= 4'b011;
                         else
                             counter = counter + 1;
-                            end else begin
-                            auto_state <= 3'b111;
-                            counter    <= 8'b0;
+                    end 
+                    else begin
+                        auto_state <= 3'b111;
+                        counter    <= 8'b0;
                     end
                 end
                 4'b1000: begin
