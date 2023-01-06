@@ -116,17 +116,17 @@ always @(posedge clk, posedge reset) begin
     end
     else begin 
         //认为开着车是可以换模式的
-        // mode<=mode_selection;
+        mode<=mode_selection;
 
 
         //开着车不能换模式
-        case (mode) 
-            2'b00: begin 
-                if(mode_selection != 2'b00) begin 
-                    mode <= mode_selection;
-                end
-            end
-        endcase
+        // case (mode) 
+        //     2'b00: begin 
+        //         if(mode_selection != 2'b00) begin 
+        //             mode <= mode_selection;
+        //         end
+        //     end
+        // endcase
     end
 end
 
@@ -207,7 +207,7 @@ SemiAutoDriving u_semi_auto_driving(
     .turn_left_Semi(turn_left),
     .turn_right_Semi(turn_right),
     .go_straight_Semi(go_straight_semi),
-    .turn_back_Semi(reverse_gear),
+    .turn_back_Semi(semi_reverse),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),
@@ -310,6 +310,7 @@ vga_top vga_top(
     .reset(reset),
     .record(record),
     .mode(mode),
+    .power_state(power_state),
     .hsync(hsync),
     .vsync(vsync),
     .rgb(rgb)
