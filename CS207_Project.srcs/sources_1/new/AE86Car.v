@@ -31,6 +31,7 @@ module AE86Car(
     input turn_left,            // 左转 button V1
     input turn_right,           // 右转 button R11
     //由于题上说明左右转用按钮，所以手动半自动左右转共用
+    input semi_reverse,         // 倒车 switch R2
     // input turn_left_Semi,       // 左转 button V1
     // input turn_right_Semi,      // 右转 button R11
     input go_straight_semi,     // 直走 button U4

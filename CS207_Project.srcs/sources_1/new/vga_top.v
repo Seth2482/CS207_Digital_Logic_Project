@@ -32,7 +32,6 @@ module vga_top(
             n9  <= 0;
         end
         else begin
-            // n8 <= record/1_000_0000%10;
             n9 <= power_state;
             n8 <= mode;
             n7 <= record/1_000_000%10;
