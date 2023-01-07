@@ -20,18 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module AutoDriving(input reset,
-                   input clk,
-                   input front_detector,
-                   input back_detector,
-                   input right_detector,
-                   input left_detector,
-                   output reg turn_left_signal,
-                   output reg turn_right_signal,
-                   output reg move_forward_signal,
-                   output reg move_backward_signal,
-                   output reg place_barrier_signal,
-                   output reg destroy_barrier_signal);
+module AutoDriving(input reset,// 重置信号
+                   input clk,//系统时钟
+                   input front_detector,//检测器
+                   input back_detector,//
+                   input right_detector,//
+                   input left_detector,//
+                   output reg turn_left_signal,//输出到顶层模块的左转信号
+                   output reg turn_right_signal,//输出到顶层模块的右转信号
+                   output reg move_forward_signal,//输出到顶层模块的前进信号
+                   output reg move_backward_signal,//输出到顶层模块的后退信号
+                   output reg place_barrier_signal,//输出到顶层模块的放障碍信号
+                   output reg destroy_barrier_signal//输出到顶层模块的摧毁障碍信号
+                   );
     wire clk_100hz;
     reg [3:0] auto_state;
     // 000 Place barrier
@@ -58,7 +59,7 @@ module AutoDriving(input reset,
     
     always @(posedge clk_100hz, posedge reset)
     begin
-        if (reset)begin
+        if (reset || !power_state)begin
             auto_state <= 4'b011;
             counter    <= 8'b0;
         end
@@ -148,7 +149,11 @@ module AutoDriving(input reset,
                 
                 // force go straight
                 4'b100: begin
-                    if (counter == 8'd80) begin
+                    if (front_detector) begin 
+                        auto_state = 4'b011;
+                        counter    <= 8'b0;
+                    end
+                    else if (counter == 8'd90) begin
                         auto_state <= 4'b000; // place barrier
                         counter    <= 8'b0;
                     end

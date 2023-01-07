@@ -21,10 +21,11 @@
 
 
 module power_module(input clk,
-                    input power_on,
+                    input power_on,// 开机键
                     input power_off,  // 如果其它模块要关闭电源，请通过此接口传入
-                    input reset,
-                    output reg power_state);
+                    input reset,//重置信号
+                    output reg power_state// 输出到顶层模块
+                    );
     
     wire clk_100hz;                // 100hz分频器
     reg [1:0] activation_state;    // 车辆power的状态

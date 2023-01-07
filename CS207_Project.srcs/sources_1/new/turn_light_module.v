@@ -19,15 +19,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module turn_light_module(input reset,
-                         input clk,
-                         input power_state,
-                         input [1:0] mode,
-                         input [1:0] manual_state,
-                         input turn_left_signal,
-                         input turn_right_signal,
-                         output reg left_led,
-                         output reg right_led);
+module turn_light_module(input reset,//重置信号
+                         input clk,//系统时钟
+                         input power_state,//是否开机
+                         input [1:0] mode,//模式选择
+                         input [1:0] manual_state,//
+                         input turn_left_signal,//输入左转信号
+                         input turn_right_signal,//输入右转信号
+                         output reg left_led,//输出到顶层模块的左转信号
+                         output reg right_led//输出到顶层模块的右转信号
+                         );
     wire clk_2hz;
     reg [1:0] state; // turn light state
     // 00 two lights keep off

@@ -21,20 +21,20 @@
 
 
 module ManualDriving(
-    input power_state,
-    input [1:0] mode,
-    input clk,
-    input reset,
+    input power_state,//
+    input [1:0] mode,//
+    input clk,//系统时钟
+    input reset,//重置信号
 
     input throttle_in,brake,clutch,shift,turn_left,turn_right,
-
-    output reg turn_left_signal,
-    output reg turn_right_signal,
-    output reg move_forward_signal,
-    output reg move_backward_signal,
+    //油门  刹车  离合   左转   右转
+    output reg turn_left_signal,//输出左转信号到顶层模块
+    output reg turn_right_signal,//输出右转信号到顶层模块
+    output reg move_forward_signal,//输出前进信号到顶层模块
+    output reg move_backward_signal,//输出后退信号到顶层模块
     
     output reg power_off_manual,//手动挡中更改power状态
-    output reg[1:0] manual_state
+    output reg[1:0] manual_state//
     );
     //reg[1:0] manual_state;移至output
     
