@@ -116,6 +116,7 @@ module AutoDriving(input reset,
                                 auto_state <= 4'b110; // auto turn left
                             end
                             4'b1010: begin
+                                counter <= 8'b0;
                                 auto_state <= 4'b101; // auto turn right
                             end
                             4'b1100: begin
