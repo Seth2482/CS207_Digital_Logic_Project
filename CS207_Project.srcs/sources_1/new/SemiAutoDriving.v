@@ -58,31 +58,31 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
     always @(posedge clk_100hz, posedge reset)
     begin
         if (reset)begin
-            Semi_state <= 3'b011;
+            Semi_state <= 4'b0011;
             counter    <= 8'b0;
         end
         else begin
             case(Semi_state)
                 // waiting for command
-                3'b000:begin
+                4'b0000:begin
                     if (go_straight_Semi && ~front_detector)begin
-                        Semi_state <= 3'b100;
+                        Semi_state <= 4'b0100;
                         counter    <= 8'b0;
                     end
                     else if (turn_left_Semi) begin
-                        Semi_state <= 3'b001;
+                        Semi_state <= 4'b1001;
                         counter    <= 8'b0;
                     end
                     else if (turn_right_Semi)begin
-                        Semi_state <= 3'b010;
+                        Semi_state <= 4'b1010;
                         counter    <= 8'b0;
                     end
                     else Semi_state <= 3'b000;
                 end
                 // turn left
-                3'b001: begin
+                4'b0001: begin
                     if (counter == 8'd90) begin
-                        Semi_state <= 3'b011; // buffer state
+                        Semi_state <= 4'b0011; // buffer state
                         counter    <= 8'b0;
                     end
                     else
@@ -90,9 +90,9 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 end
                 
                 // turn right
-                3'b010: begin 
+                4'b0010: begin 
                     if (counter == 8'd90) begin
-                        Semi_state <= 3'b011;
+                        Semi_state <= 4'b0011; // buffer state
                         counter    <= 8'b0;
                     end
                     else
@@ -100,42 +100,42 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 end
                 
                 // buffer state
-                3'b011: begin
+                4'b0011: begin
                     if(counter == 8'd100) begin 
                         case(pos)
                         4'b0011: begin 
-                            Semi_state <= 3'b111; // go straight
+                            Semi_state <= 4'b0111; // go straight
                         end
                         4'b0101: begin
-                            Semi_state <= 3'b111; // go straight
+                            Semi_state <= 4'b0111; // go straight
                         end
                         4'b0110: begin
-                            Semi_state <= 3'b111; // go straight
+                            Semi_state <= 4'b0111; // go straight
                         end
                         4'b1001: begin
-                            Semi_state <= 3'b001; // turn left
+                            Semi_state <= 4'b0001; // turn left
                         end            
                         4'b1010: begin
-                            Semi_state <= 3'b010; // turn right
+                            Semi_state <= 4'b0010; // turn right
                         end            
 
                         4'b1100: begin 
-                            Semi_state <= 3'b000; // waiting for command
+                            Semi_state <= 4'b0000; // waiting for command
                         end
                         4'b0111: begin 
-                            Semi_state <= 3'b111; // go straight
+                            Semi_state <= 4'b0111; // go straight
                         end
                         4'b1011: begin
-                            Semi_state <= 3'b010; // turn around(turn right first)
+                            Semi_state <= 4'b0010; // turn around(turn right first)
                         end
                         4'b1101: begin
-                            Semi_state <= 3'b001; // turn left
+                            Semi_state <= 4'b0001; // turn left
                         end
                         4'b1110: begin
-                            Semi_state <= 3'b010; // turn right                        
+                            Semi_state <= 4'b0010; // turn right                        
                         end
                         default: begin
-                            Semi_state <= 3'b000; // waiting for command
+                            Semi_state <= 4'b0000; // waiting for command
                         end
                         endcase
                         counter <= 8'b0;
@@ -144,9 +144,9 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 end
                 
                 // force go straight
-                3'b100: begin
+                4'b0100: begin
                     if (counter == 8'd30) begin
-                        Semi_state <= 3'b111;
+                        Semi_state <= 4'b0111;
                         counter    <= 8'b0;
                     end
                     else
@@ -154,21 +154,21 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
                 end
                 
                 // auto go straight
-                3'b111: begin
+                4'b0111: begin
                     if((front_detector || pos == 4'b0001 || pos == 4'b0010 || pos == 4'b0000)) begin // 0.1s for correction
                         if(counter == 8'd10)
                             // go buffer state 
-                            Semi_state <= 3'b011;
+                            Semi_state <= 4'b0011;
                         else
                             counter = counter + 1;
                     end else begin 
-                        Semi_state <= 3'b111;
+                        Semi_state <= 4'b0111;
                         counter <= 8'b0;
                     end
                 end
                 default:
                     // handler exception
-                    Semi_state = 3'b011;
+                    Semi_state = 4'b0011;
             endcase
         end
     end
@@ -180,18 +180,24 @@ module SemiAutoDriving(input turn_left_Semi,            // 左转 switch
         else begin
             case(Semi_state)
                 // waiting for command
-                3'b000:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
+                4'b0000:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
                 // turn left
-                3'b001:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b001;
+                4'b0001:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b001;
                 // turn right
-                3'b010:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
+                4'b0010:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
                 // buffer state
-                3'b011:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
+                4'b0011:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b000;
                 // force go straight
-                3'b100:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
+                4'b0100:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
+                // force turn back
+                4'b0101:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
                 // auto go straight
-                3'b111:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
-            endcase
+                4'b0111:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b100;
+                // force turn left
+                4'b1001:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b001; 
+                // force turn right
+                4'b1010:{move_forward_signal,turn_right_signal,turn_left_signal} <= 3'b010;
+                endcase
         end
     end
     

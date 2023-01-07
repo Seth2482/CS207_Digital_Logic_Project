@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 module BCD_conventer(
-    input x,
+    input [3:0] x,
     output reg [3:0] bcd_x
 );
 
