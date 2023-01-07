@@ -26,6 +26,7 @@ module AutoDriving(input reset,// 重置信号
                    input back_detector,//
                    input right_detector,//
                    input left_detector,//
+                   input power_state,
                    output reg turn_left_signal,//输出到顶层模块的左转信号
                    output reg turn_right_signal,//输出到顶层模块的右转信号
                    output reg move_forward_signal,//输出到顶层模块的前进信号
@@ -59,7 +60,7 @@ module AutoDriving(input reset,// 重置信号
     
     always @(posedge clk_100hz, posedge reset)
     begin
-        if (reset)begin
+        if (reset || !power_state)begin
             auto_state <= 4'b011;
             counter    <= 8'b0;
         end
@@ -148,7 +149,11 @@ module AutoDriving(input reset,// 重置信号
                 
                 // force go straight
                 4'b100: begin
-                    if (counter == 8'd80) begin
+                    if (front_detector) begin 
+                        auto_state = 4'b011;
+                        counter    <= 8'b0;
+                    end
+                    else if (counter == 8'd90) begin
                         auto_state <= 4'b000; // place barrier
                         counter    <= 8'b0;
                     end

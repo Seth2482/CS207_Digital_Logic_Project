@@ -31,6 +31,7 @@ module AE86Car(
     input turn_left,            // 左转 button V1
     input turn_right,           // 右转 button R11
     //由于题上说明左右转用按钮，所以手动半自动左右转共用
+    input semi_reverse,         // 倒车 switch R2
     // input turn_left_Semi,       // 左转 button V1
     // input turn_right_Semi,      // 右转 button R11
     input go_straight_semi,     // 直走 button U4
@@ -46,10 +47,10 @@ module AE86Car(
 
 
 //测试输出
-    output power_state,
+    // output power_state,
     output reg [1:0] mode,
     output [1:0] manual_state,
-    output manual_move_forward_signal,
+    // output manual_move_forward_signal,
 
     output front_detector,
     output back_detector,
@@ -64,7 +65,7 @@ wire reset;
 assign  reset = ~rst_n;
 
 // Global States
-//wire power_state;//电源状态
+wire power_state;//电源状态
 // reg [1:0] mode;//驾驶模式,01为手动，10为半自动，11为全自动
 // wire [1:0] manual_state;//手动驾驶中的not_starting,starting,moving状态
 
@@ -109,23 +110,13 @@ wire power_off_signal;
 wire power_off_manual;
 
 // mode selection
-always @(posedge clk, posedge reset) begin
+always @(mode_selection,reset) begin
     if(reset) begin 
         mode <= 2'b00;
     end
     else begin 
-        //认为开着车是可以换模式的
-        // mode<=mode_selection;
-
-
-        //开着车不能换模式
-        case (mode) 
-            2'b00: begin 
-                if(mode_selection != 2'b00) begin 
-                    mode <= mode_selection;
-                end
-            end
-        endcase
+        // 只有在静止状态可以切换模式
+        mode<= (turn_left_signal || turn_right_signal || move_forward_signal || move_backward_signal || power_state)? mode : mode_selection;
     end
 end
 
@@ -206,7 +197,7 @@ SemiAutoDriving u_semi_auto_driving(
     .turn_left_Semi(turn_left),
     .turn_right_Semi(turn_right),
     .go_straight_Semi(go_straight_semi),
-    .turn_back_Semi(reverse_gear),
+    .turn_back_Semi(semi_reverse),
     .clk(clk),
     .turn_left_signal(semiauto_turn_left_signal),
     .turn_right_signal(semiauto_turn_right_signal),
@@ -219,40 +210,6 @@ SemiAutoDriving u_semi_auto_driving(
     .front_detector(front_detector)
 );
 
-// semi_auto u_semi_auto(
-//     .turn_left_semi(turn_left),
-//     .turn_right_semi(turn_right),
-//     .go_straight_semi(go_straight_semi),
-//     .clk(clk),
-//     .turn_left_signal(semiauto_turn_left_signal),
-//     .turn_right_signal(semiauto_turn_right_signal),
-//     .move_forward_signal(semiauto_move_forward_signal),
-//     .move_backward_signal(semiauto_move_backward_signal),
-//     .reset(reset),
-//     .back_detector(back_detector),
-//     .left_detector(left_detector),
-//     .right_detector(right_detector),
-//     .front_detector(front_detector)
-// );
-
-//  semi_auto2 u_semi_auto(
-//     .turn_left_semi(turn_left),
-//     .turn_right_semi(turn_right),
-//     .go_straight_semi(go_straight_semi),
-//     .turn_back_semi(reverse_gear),
-//     .clk(clk),
-//     .turn_left_signal(semiauto_turn_left_signal),
-//     .turn_right_signal(semiauto_turn_right_signal),
-//     .move_forward_signal(semiauto_move_forward_signal),
-//     .move_backward_signal(semiauto_move_backward_signal),
-//     .reset(reset),
-//     .back_detector(back_detector),
-//     .left_detector(left_detector),
-//     .right_detector(right_detector),
-//     .front_detector(front_detector)
-// );
-
-
 AutoDriving u_auto_driving(
     .reset(reset),
     .clk(clk),
@@ -260,6 +217,7 @@ AutoDriving u_auto_driving(
     .back_detector(back_detector),
     .right_detector(right_detector),
     .left_detector(left_detector),
+    .power_state(power_state),
     .turn_left_signal(auto_turn_left_signal),
     .turn_right_signal(auto_turn_right_signal),
     .move_backward_signal(auto_move_backward_signal),
@@ -321,11 +279,12 @@ SimulatedDevice simulate(
     .right_detector(right_detector)
 );
 
-top top_vga(
+vga_top vga_top(
     .clk_100MHz(clk),
     .reset(reset),
     .record(record),
     .mode(mode),
+    .power_state(power_state),
     .hsync(hsync),
     .vsync(vsync),
     .rgb(rgb)
