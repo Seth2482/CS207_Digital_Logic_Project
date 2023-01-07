@@ -235,8 +235,7 @@ SemiAutoDriving u_semi_auto_driving(
 //     .front_detector(front_detector)
 // );
 
-<<<<<<< HEAD
-// semi_auto2 u_semi_auto(
+//  semi_auto2 u_semi_auto(
 //     .turn_left_semi(turn_left),
 //     .turn_right_semi(turn_right),
 //     .go_straight_semi(go_straight_semi),
@@ -253,8 +252,6 @@ SemiAutoDriving u_semi_auto_driving(
 //     .front_detector(front_detector)
 // );
 
-=======
->>>>>>> 37801f13c49f14f0c34260cd119f568b45fd64c2
 
 AutoDriving u_auto_driving(
     .reset(reset),

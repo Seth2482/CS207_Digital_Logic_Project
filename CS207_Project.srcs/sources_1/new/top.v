@@ -3,8 +3,6 @@
 module top(
     input clk_100MHz,       // 100MHz on Basys 3
     input reset,            // btnC
-    // input tick_hr,          // btnL
-    // input tick_min,         // btnR  
     input [23:0] record,   //你传进来的东西
     input [1:0] mode,
     output hsync,           // to VGA Connector

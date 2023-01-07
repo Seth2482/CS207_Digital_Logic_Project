@@ -20,9 +20,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module clk_divider(input clk,
+module clk_divider(input clk,//系统时钟
                    reset,
-                   output reg clk_out);
+                   output reg clk_out//最终经过处理所得的频率
+                   );
     parameter period = 1_0000_0000;
     reg [31:0] cnt;
     always@(posedge clk)

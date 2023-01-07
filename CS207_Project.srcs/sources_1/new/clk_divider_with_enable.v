@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 // designed for record_module
-module clk_divider_with_enable(input clk,
+module clk_divider_with_enable(input clk,//系统时钟
                    reset,
                    enable,
                    output reg clk_out);

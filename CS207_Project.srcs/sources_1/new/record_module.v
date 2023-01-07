@@ -23,13 +23,14 @@
 module record_module(input reset,
                      input clk,
                      input power_state,
-                     input [1:0] mode,
-                     input [1:0] manual_state,
-                     input turn_left_signal,
+                     input [1:0] mode,//the type of mode
+                     input [1:0] manual_state,// state in manualDriving
+                     input turn_left_signal,// four command
                      input turn_right_signal,
                      input move_forward_signal,
                      input move_backward_signal,
-                     output reg [23:0] record);
+                     output reg [23:0] record// the number of road that the car has gotten through
+                     );
     wire clk_2hz;
     clk_divider_with_enable u_clk_2hz(.clk(clk),
     .reset(reset || ~power_state),
