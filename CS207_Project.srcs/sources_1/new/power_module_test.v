@@ -9,7 +9,7 @@
 // Project Name:
 // Target Devices:
 // Tool Versions:
-// Description:
+// Description: 点火熄火测试模块
 //
 // Dependencies:
 //

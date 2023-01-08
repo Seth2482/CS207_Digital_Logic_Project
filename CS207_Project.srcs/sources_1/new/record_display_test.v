@@ -9,7 +9,7 @@
 // Project Name:
 // Target Devices:
 // Tool Versions:
-// Description:
+// Description: 里程表测试模块
 //
 // Dependencies:
 //
